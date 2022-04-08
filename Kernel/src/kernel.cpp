@@ -61,37 +61,33 @@ void Kernel::KernelStart(struct stivale2_struct *stivale2_struct) {
     GlobalAllocator.ReadMemoryMap(memmap_str_tag);
 
     uint64_t kernel_size = (uint64_t)&end - (uint64_t)&_KernelStart;
-	uint64_t kernel_pages = (uint64_t)kernel_size / 4096 + 1;
+    uint64_t kernel_pages = (uint64_t)kernel_size / 4096 + 1;
 
-	GlobalAllocator.LockPages(&_KernelStart, kernel_pages);
+    GlobalAllocator.LockPages(&_KernelStart, kernel_pages);
     HuskyStandardOutput.kprint("TESZHT");
 
-
-    PageTable* PML4 = (PageTable*)GlobalAllocator.RequestPage();
+    PageTable *PML4 = (PageTable *)GlobalAllocator.RequestPage();
     memset(PML4, 0, 0x1000);
 
-    GlobalPageTableManager.MapMemory((void*)PML4,(void*)PML4);
+    GlobalPageTableManager.MapMemory((void *)PML4, (void *)PML4);
 
     GlobalPageTableManager = PageTableManager(PML4);
-    
 
-    for (uint64_t t = 0; t < MemFunc.GetAllFreeMemory(memmap_str_tag); t+= 0x1000){
-        GlobalPageTableManager.MapMemory((void*)t, (void*)t);
+    for (uint64_t t = 0; t < MemFunc.GetAllFreeMemory(memmap_str_tag); t += 0x1000) {
+        GlobalPageTableManager.MapMemory((void *)t, (void *)t);
     }
 
-    stivale2_struct_tag_framebuffer* framebuffer = (stivale2_struct_tag_framebuffer*)stivale2_get_tag(stivale2_struct, STIVALE2_STRUCT_TAG_FRAMEBUFFER_ID);
+    stivale2_struct_tag_framebuffer *framebuffer = (stivale2_struct_tag_framebuffer *)stivale2_get_tag(stivale2_struct, STIVALE2_STRUCT_TAG_FRAMEBUFFER_ID);
     uint64_t fbBase = (uint64_t)framebuffer->framebuffer_addr;
-	uint64_t fbSize = (framebuffer->framebuffer_width * framebuffer->framebuffer_height * framebuffer->framebuffer_bpp) + 0x1000;
-	GlobalAllocator.LockPages((void*)fbBase, fbSize / 0x1000 + 1);
-	for (uint64_t t = fbBase; t < fbBase + fbSize; t += 4096){
-		GlobalPageTableManager.MapMemory((void*)t, (void*)t);
-	}
+    uint64_t fbSize = (framebuffer->framebuffer_width * framebuffer->framebuffer_height * framebuffer->framebuffer_bpp) + 0x1000;
+    GlobalAllocator.LockPages((void *)fbBase, fbSize / 0x1000 + 1);
+    for (uint64_t t = fbBase; t < fbBase + fbSize; t += 4096) {
+        GlobalPageTableManager.MapMemory((void *)t, (void *)t);
+    }
 
-  
     HuskyStandardOutput.kprint("TESZHT\n");
 
-    for (uint64_t i = 0; i < 512; i++)
-    {
+    for (uint64_t i = 0; i < 512; i++) {
         PageDirectoryEntry entry = GlobalPageTableManager.PML4->Entries[i];
         HuskyStandardOutput.kprint("%llu  ", entry.Value);
     }
@@ -102,10 +98,11 @@ void Kernel::KernelStart(struct stivale2_struct *stivale2_struct) {
     HuskyStandardOutput.kprint("Reserved: %llu kb\n", GlobalAllocator.GetReservedRAM() / 1024);
 
     HuskyStandardOutput.kprint("\nINSERTING INTO CR0\n");
-    asm ("mov %0, %%cr3" : : "r" (PML4));
+    asm("mov %0, %%cr3"
+        :
+        : "r"(PML4));
     HuskyStandardOutput.kprint("INSERTED\n");
     // makeGDT();
-
 
     HuskyStandardOutput.kprint("$ [ root in / ] >");
     for (;;) {

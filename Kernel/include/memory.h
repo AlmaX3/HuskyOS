@@ -63,6 +63,6 @@ class MemoryFunctions {
         uint64_t GetAllFreeMemory(stivale2_struct_tag_memmap* memmap_str_tag);
 };
 
-extern "C" void load_pml4(struct PageTable * pml4);
+
 
 extern MemoryFunctions MemFunc;
