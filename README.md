@@ -5,7 +5,7 @@ A hobby operating system that runs on x86-64.
 ### Goals
 #### Near Future
 - [x] "Hello World" on screen
-- [ ] Paging
+- [x] Paging
 - [ ] Global Descriptor Table
 - [ ] IDT
 - [ ] ISR
