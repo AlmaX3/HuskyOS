@@ -22,20 +22,6 @@ __attribute__((section(".stivale2hdr"), used)) static struct stivale2_header sti
     .flags = (1 << 1) | (1 << 2) | (1 << 3) | (1 << 4),
     .tags = (uintptr_t)&framebuffer_hdr_tag};
 
-stivale2_tag *Kernel::stivale2_get_tag(struct stivale2_struct *stivale2_struct, uint64_t id) {
-    struct stivale2_tag *current_tag = (stivale2_tag *)stivale2_struct->tags;
-    for (;;) {
-        if (current_tag == nullptr) {
-            return nullptr;
-        }
-
-        if (current_tag->identifier == id) {
-            return current_tag;
-        }
-
-        current_tag = (stivale2_tag *)current_tag->next;
-    }
-}
 
 extern uint64_t _KernelStart;
 extern uint64_t end;
@@ -45,26 +31,25 @@ void Kernel::makeGDT() {
     HuskyStandardOutput.kprint("[ GDT STATUS ] INITIALIZED\n");
 }
 
-#define GB 0x40000000UL
 
 void Kernel::KernelStart(struct stivale2_struct *stivale2_struct) {
     struct stivale2_struct_tag_terminal *term_str_tag;
     term_str_tag = (stivale2_struct_tag_terminal *)stivale2_get_tag(stivale2_struct, STIVALE2_STRUCT_TAG_TERMINAL_ID);
     TextMode.initializeTextMode(term_str_tag);
-
     HuskyStandardOutput.kprint("Husky Kernel Started!\n");
+    
 
     struct stivale2_struct_tag_memmap *memmap_str_tag;
     memmap_str_tag = (stivale2_struct_tag_memmap *)stivale2_get_tag(stivale2_struct, STIVALE2_STRUCT_TAG_MEMMAP_ID);
 
     GlobalAllocator = PageFrameAllocator();
-    GlobalAllocator.ReadMemoryMap(memmap_str_tag);
+    GlobalAllocator.ReadMemoryMap(stivale2_struct);
 
     uint64_t kernel_size = (uint64_t)&end - (uint64_t)&_KernelStart;
     uint64_t kernel_pages = (uint64_t)kernel_size / 4096 + 1;
 
     GlobalAllocator.LockPages(&_KernelStart, kernel_pages);
-    HuskyStandardOutput.kprint("TESZHT");
+    HuskyStandardOutput.kprint("Kernel size: %llu (pages: %llu)\n", kernel_size, kernel_pages);
 
     PageTable *PML4 = (PageTable *)GlobalAllocator.RequestPage();
     memset(PML4, 0, 0x1000);
@@ -85,8 +70,6 @@ void Kernel::KernelStart(struct stivale2_struct *stivale2_struct) {
         GlobalPageTableManager.MapMemory((void *)t, (void *)t);
     }
 
-    HuskyStandardOutput.kprint("TESZHT\n");
-
     for (uint64_t i = 0; i < 512; i++) {
         PageDirectoryEntry entry = GlobalPageTableManager.PML4->Entries[i];
         HuskyStandardOutput.kprint("%llu  ", entry.Value);
@@ -98,11 +81,11 @@ void Kernel::KernelStart(struct stivale2_struct *stivale2_struct) {
     HuskyStandardOutput.kprint("Reserved: %llu kb\n", GlobalAllocator.GetReservedRAM() / 1024);
 
     HuskyStandardOutput.kprint("\nINSERTING INTO CR0\n");
-    asm("mov %0, %%cr3"
+    __asm__ __volatile__ ("mov %0, %%cr3"
         :
         : "r"(PML4));
     HuskyStandardOutput.kprint("INSERTED\n");
-    // makeGDT();
+
 
     HuskyStandardOutput.kprint("$ [ root in / ] >");
     for (;;) {

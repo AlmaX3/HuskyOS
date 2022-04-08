@@ -5,8 +5,7 @@ INTERNALLDFLAGS=-ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti -mno-
 hi:
 	$(CC) -I Kernel/include/ Kernel/src/*.cpp Kernel/src/klib/*.cpp Kernel/src/memory/*.cpp Kernel/src/terminal/*.cpp Kernel/src/cpu/gdt/*.cpp -o hkernel.o $(CFLAGS)
 	nasm -f elf64 Kernel/src/cpu/gdt/*.asm -o gdt.o
-	nasm -f elf64 Kernel/src/memory/*.asm -o memory.o
-	$(CC) -T linker.ld -o husky.elf $(INTERNALLDFLAGS) hkernel.o gdt.o memory.o  
+	$(CC) -T linker.ld -o husky.elf $(INTERNALLDFLAGS) hkernel.o gdt.o
 
 
 makeIso:

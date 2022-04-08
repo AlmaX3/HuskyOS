@@ -3,6 +3,7 @@
 #include <hkStdio.h>
 #include <pageFrameAllocator.h>
 #include <terminal.h>
+#include <kernelGlobal.h>
 
 uint64_t FreeMemory;
 uint64_t ReservedMemory;
@@ -10,14 +11,14 @@ uint64_t UsedMemory;
 bool Initialized = false;
 PageFrameAllocator GlobalAllocator;
 
-void PageFrameAllocator::ReadMemoryMap(stivale2_struct_tag_memmap *memory_map) {
+void PageFrameAllocator::ReadMemoryMap(stivale2_struct* info) {
     if (Initialized)
         return;
 
     Initialized = true;
 
+    stivale2_struct_tag_memmap *memory_map = (stivale2_struct_tag_memmap *)hKernel.stivale2_get_tag(info, STIVALE2_STRUCT_TAG_MEMMAP_ID);
     uint64_t MemoryMapEntries = memory_map->entries;
-
     void *LargestFreeMemorySegment = NULL;
     size_t LargestFreeMemorySegmentSize = 0;
 
@@ -84,6 +85,37 @@ void PageFrameAllocator::FreePage(void *Address) {
         if (PageBitmapIndex > Index)
             PageBitmapIndex = Index;
     }
+}
+
+
+void* PageFrameAllocator::RequestPages(int amount){
+	for (int i = 0; i < PageBitmapIndex; i++) {
+		if(PageBitmap[i] == true) {
+			continue;
+		}
+
+		PageBitmapIndex = i;
+		break;
+	}
+
+	for (uint64_t x = PageBitmapIndex; x < PageBitmap.Size * 8; x++){
+        if (PageBitmap[x] == true) {
+			continue;
+		}
+
+		for (int i = 0; i < amount; i++) {
+			if(PageBitmap[x + i] == true) goto next;
+		}
+		
+        LockPages((void*)(x * 4096), amount);
+        return (void*)(x * 4096);
+
+	next:
+		x += amount;
+		continue;
+    }
+
+    return NULL; // Page Frame Swap to file
 }
 
 void PageFrameAllocator::FreePages(void *Address, uint64_t PageCount) {

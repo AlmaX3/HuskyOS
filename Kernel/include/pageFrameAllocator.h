@@ -7,13 +7,14 @@
 
 class PageFrameAllocator {
     public:
-    void ReadMemoryMap(stivale2_struct_tag_memmap *memory_map);
+    void ReadMemoryMap(stivale2_struct* info);
     Bitmap PageBitmap;
     void FreePage(void* Address);
     void FreePages(void* Address, uint64_t PageCount);
     void LockPage(void* Address);
     void LockPages(void* Address, uint64_t PageCount);
     void* RequestPage();
+    void* RequestPages(int amount);
     uint64_t GetFreeRAM();
     uint64_t GetUsedRAM();
     uint64_t GetReservedRAM();
