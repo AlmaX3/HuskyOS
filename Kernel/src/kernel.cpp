@@ -22,7 +22,6 @@ __attribute__((section(".stivale2hdr"), used)) static struct stivale2_header sti
     .flags = (1 << 1) | (1 << 2) | (1 << 3) | (1 << 4),
     .tags = (uintptr_t)&framebuffer_hdr_tag};
 
-
 extern uint64_t _KernelStart;
 extern uint64_t end;
 
@@ -31,13 +30,11 @@ void Kernel::makeGDT() {
     HuskyStandardOutput.kprint("[ GDT STATUS ] INITIALIZED\n");
 }
 
-
 void Kernel::KernelStart(struct stivale2_struct *stivale2_struct) {
     struct stivale2_struct_tag_terminal *term_str_tag;
     term_str_tag = (stivale2_struct_tag_terminal *)stivale2_get_tag(stivale2_struct, STIVALE2_STRUCT_TAG_TERMINAL_ID);
     TextMode.initializeTextMode(term_str_tag);
     HuskyStandardOutput.kprint("Husky Kernel Started!\n");
-    
 
     struct stivale2_struct_tag_memmap *memmap_str_tag;
     memmap_str_tag = (stivale2_struct_tag_memmap *)stivale2_get_tag(stivale2_struct, STIVALE2_STRUCT_TAG_MEMMAP_ID);
@@ -51,28 +48,29 @@ void Kernel::KernelStart(struct stivale2_struct *stivale2_struct) {
     GlobalAllocator.LockPages(&_KernelStart, kernel_pages);
     HuskyStandardOutput.kprint("Kernel size: %llu (pages: %llu)\n", kernel_size, kernel_pages);
 
-    PageTable *PML4 = (PageTable *)GlobalAllocator.RequestPage();
+    PageTable *PML4Phys = (PageTable *)GlobalAllocator.RequestPage();
+    PageTable *PML4 = (PageTable *)((uint64_t)PML4Phys + 0xffff800000000000);
     memset(PML4, 0, 0x1000);
 
-    GlobalPageTableManager.MapMemory((void *)PML4, (void *)PML4);
-
-    GlobalPageTableManager = PageTableManager(PML4);
+    GlobalPageTableManager = PageTableManager(PML4Phys);
 
     for (uint64_t t = 0; t < MemFunc.GetAllFreeMemory(memmap_str_tag); t += 0x1000) {
         GlobalPageTableManager.MapMemory((void *)t, (void *)t);
     }
 
-    stivale2_struct_tag_framebuffer *framebuffer = (stivale2_struct_tag_framebuffer *)stivale2_get_tag(stivale2_struct, STIVALE2_STRUCT_TAG_FRAMEBUFFER_ID);
-    uint64_t fbBase = (uint64_t)framebuffer->framebuffer_addr;
-    uint64_t fbSize = (framebuffer->framebuffer_width * framebuffer->framebuffer_height * framebuffer->framebuffer_bpp) + 0x1000;
-    GlobalAllocator.LockPages((void *)fbBase, fbSize / 0x1000 + 1);
-    for (uint64_t t = fbBase; t < fbBase + fbSize; t += 4096) {
-        GlobalPageTableManager.MapMemory((void *)t, (void *)t);
+    for (uint64_t i = 0; i < MemFunc.GetAllFreeMemory(memmap_str_tag) / 0x1000; i++) {
+        uintptr_t physaddr = i * 0x1000;
+        GlobalPageTableManager.MapMemory((void *)physaddr + 0xffff800000000000, (void *)physaddr);
     }
 
-    for (uint64_t i = 0; i < 512; i++) {
-        PageDirectoryEntry entry = GlobalPageTableManager.PML4->Entries[i];
-        HuskyStandardOutput.kprint("%llu  ", entry.Value);
+    stivale2_struct_tag_kernel_base_address* kernelBaseAddrStruct = (stivale2_struct_tag_kernel_base_address *)(stivale2_get_tag(stivale2_struct ,STIVALE2_STRUCT_TAG_KERNEL_BASE_ADDRESS_ID));
+    stivale2_struct_tag_pmrs * pmrsStruct = (stivale2_struct_tag_pmrs *)(stivale2_get_tag(stivale2_struct, STIVALE2_STRUCT_TAG_PMRS_ID));
+    for (uint64_t pmrIndex = 0; pmrIndex < pmrsStruct->entries; ++pmrIndex) {
+        stivale2_pmr pmr = pmrsStruct->pmrs[pmrIndex];
+        for (uint64_t pmrVirtAddr = pmr.base; pmrVirtAddr < pmr.base + pmr.length; pmrVirtAddr += 0x1000) {
+            uint64_t physAddr = kernelBaseAddrStruct->physical_base_address + (pmrVirtAddr - kernelBaseAddrStruct->virtual_base_address);
+            GlobalPageTableManager.MapMemory((void *)(pmrVirtAddr), (void *)(physAddr));
+        }
     }
 
     HuskyStandardOutput.kprint("\nGETTING MEM INFO.\n");
@@ -80,12 +78,11 @@ void Kernel::KernelStart(struct stivale2_struct *stivale2_struct) {
     HuskyStandardOutput.kprint("Used: %llu kb\n", GlobalAllocator.GetUsedRAM() / 1024);
     HuskyStandardOutput.kprint("Reserved: %llu kb\n", GlobalAllocator.GetReservedRAM() / 1024);
 
-    HuskyStandardOutput.kprint("\nINSERTING INTO CR0\n");
-    __asm__ __volatile__ ("mov %0, %%cr3"
-        :
-        : "r"(PML4));
+    HuskyStandardOutput.kprint("\nINSERTING INTO CR3\n");
+    __asm__ __volatile__("mov %0, %%cr3"
+                         :
+                         : "r"(PML4Phys));
     HuskyStandardOutput.kprint("INSERTED\n");
-
 
     HuskyStandardOutput.kprint("$ [ root in / ] >");
     for (;;) {

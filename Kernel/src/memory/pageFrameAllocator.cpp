@@ -35,7 +35,7 @@ void PageFrameAllocator::ReadMemoryMap(stivale2_struct* info) {
     FreeMemory = MemorySize;
     uint64_t BitmapSize = MemorySize / 4096 / 8 + 1;
 
-    InitBitmap(BitmapSize, LargestFreeMemorySegment);
+    InitBitmap(BitmapSize, LargestFreeMemorySegment + 0xffff800000000000);
 
     ReservePages(0, MemorySize / 4096 + 1);
     for (int i = 0; i < memory_map->entries; i++){
