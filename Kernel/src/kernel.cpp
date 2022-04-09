@@ -26,11 +26,14 @@ extern uint64_t _KernelStart;
 extern uint64_t end;
 
 void Kernel::makeGDT() {
-    gdt_init();
+    setup_gdt();
     HuskyStandardOutput.kprint("[ GDT STATUS ] INITIALIZED\n");
+   
+    
 }
 
 void Kernel::KernelStart(struct stivale2_struct *stivale2_struct) {
+    cpu_init();
     struct stivale2_struct_tag_terminal *term_str_tag;
     term_str_tag = (stivale2_struct_tag_terminal *)stivale2_get_tag(stivale2_struct, STIVALE2_STRUCT_TAG_TERMINAL_ID);
     TextMode.initializeTextMode(term_str_tag);
@@ -73,18 +76,17 @@ void Kernel::KernelStart(struct stivale2_struct *stivale2_struct) {
         }
     }
 
-    HuskyStandardOutput.kprint("\nGETTING MEM INFO.\n");
-    HuskyStandardOutput.kprint("Free: %llu kb\n", GlobalAllocator.GetFreeRAM() / 1024);
-    HuskyStandardOutput.kprint("Used: %llu kb\n", GlobalAllocator.GetUsedRAM() / 1024);
-    HuskyStandardOutput.kprint("Reserved: %llu kb\n", GlobalAllocator.GetReservedRAM() / 1024);
-
     HuskyStandardOutput.kprint("\nINSERTING INTO CR3\n");
     __asm__ __volatile__("mov %0, %%cr3"
                          :
                          : "r"(PML4Phys));
     HuskyStandardOutput.kprint("INSERTED\n");
 
-    HuskyStandardOutput.kprint("$ [ root in / ] >");
+    HuskyStandardOutput.kprint("Setting up GDT.\n");
+   // makeGDT();
+
+   HuskyStandardOutput.kprint("Initialized");
+
     for (;;) {
         asm("hlt");
     }

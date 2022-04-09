@@ -20,3 +20,4 @@ public:
     stivale2_tag *stivale2_get_tag(struct stivale2_struct *stivale2_struct, uint64_t id);
 };
 extern Kernel hKernel;
+extern "C" void cpu_init();
