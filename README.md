@@ -6,7 +6,7 @@ A hobby operating system that runs on x86-64. The main goal is to have a modern 
 #### Near Future
 - [x] "Hello World" on screen
 - [x] Paging
-- [ ] Framebuffer
+- [x] Framebuffer
 - [ ] Global Descriptor Table
 - [ ] IDT
 - [ ] ISR
