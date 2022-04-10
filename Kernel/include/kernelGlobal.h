@@ -12,7 +12,6 @@
 #include <paging.h>
 #include "heap.h"
 
-
 class Kernel {
 public:
     void KernelStart(struct stivale2_struct *stivale2_struct);

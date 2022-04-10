@@ -3,7 +3,7 @@
 #include <pageFrameAllocator.h>
 #include <string.h>
 
-/*
+
 void * heapStart;
 void * heapEnd;
 HeapSegHdr* LastHdr;
@@ -11,7 +11,7 @@ void initializeHeap(void *heapAddress, size_t pageCount){
     void * pos  = heapAddress;
     for (size_t i = 0; i < pageCount; i++)
     {
-        g_pageTableManager.MapMemory(pos, GlobalAllocator.RequestPage());
+        GlobalPageTableManager.MapMemory(pos, GlobalAllocator.RequestPage());
         pos = (void*)((size_t)pos + 0x1000);
     }
     
@@ -114,7 +114,7 @@ void ExpandHeap(size_t size) {
 
     for (size_t i = 0; i < pageCount; i++)
     {
-        g_pageTableManager.MapMemory(heapEnd, GlobalAllocator.RequestPage());
+        GlobalPageTableManager.MapMemory(heapEnd, GlobalAllocator.RequestPage());
         heapEnd = (void*)((size_t)heapEnd + 0x1000);
     }
 
@@ -142,5 +142,3 @@ void HeapSegHdr::CombineForward(){
 void HeapSegHdr::CombineBackward() {
     if(last != 0 && last->free) last->CombineForward();
 }
-
-*/

@@ -76,17 +76,20 @@ void Kernel::KernelStart(struct stivale2_struct *stivale2_struct) {
         }
     }
 
+
+
     HuskyStandardOutput.kprint("\nINSERTING INTO CR3\n");
     __asm__ __volatile__("mov %0, %%cr3"
                          :
                          : "r"(PML4Phys));
     HuskyStandardOutput.kprint("INSERTED\n");
 
-    HuskyStandardOutput.kprint("Setting up GDT.\n");
-   // makeGDT();
+    initializeHeap((void *)0x00001000000, 0x10);
 
-   HuskyStandardOutput.kprint("Initialized");
-
+    stivale2_struct_tag_framebuffer* framebuffer = (stivale2_struct_tag_framebuffer*)stivale2_get_tag(stivale2_struct, STIVALE2_STRUCT_TAG_FRAMEBUFFER_ID); 
+    GfxMode.initializeFramebuffer(framebuffer);
+    
+    HuskyStandardOutput.kprint("Hello, from GFX!");
     for (;;) {
         asm("hlt");
     }

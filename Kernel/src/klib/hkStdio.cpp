@@ -22,25 +22,38 @@ void hkStdIo::vkprint(const char *fmt, va_list args) {
             if (*fmt == '%') {
                 state = 1;
             } else {
-                TextMode.putchar(*fmt);
+                if (GFX_MODE == 0)
+                    TextMode.putchar(*fmt);
+                else
+                    GfxMode.putchar(*fmt);
             }
         } else if (state == 1) {
             switch (*fmt) {
             case 'c': {
                 char ch = va_arg(args, int);
-                TextMode.putchar(ch);
+                if (GFX_MODE == 0)
+                    TextMode.putchar(ch);
+                else
+                    GfxMode.putchar(ch);
+                ;
                 break;
             }
             case 's': {
                 const char *s = va_arg(args, const char *);
                 while (*s) {
-                    TextMode.putchar(*s);
+                    if (GFX_MODE == 0)
+                        TextMode.putchar(*s);
+                    else
+                        GfxMode.putchar(*s);
                     *s++;
                 }
                 break;
             }
             case '%': {
-                TextMode.putchar('%');
+                if (GFX_MODE == 0)
+                    TextMode.putchar('%');
+                else
+                    GfxMode.putchar('%');
                 break;
             }
             case 'l': {
@@ -87,7 +100,10 @@ void hkStdIo::vkprint(const char *fmt, va_list args) {
                     }
 
                     for (int i = 0; buff[i]; i++) {
-                        TextMode.putchar(buff[i]);
+                        if (GFX_MODE == 0)
+                            TextMode.putchar(buff[i]);
+                        else
+                            GfxMode.putchar(buff[i]);
                     }
                 } else if (is_long == 1) {
                     int32_t n = va_arg(args, long);
@@ -101,7 +117,10 @@ void hkStdIo::vkprint(const char *fmt, va_list args) {
                     }
 
                     for (int i = 0; buff[i]; i++) {
-                        TextMode.putchar(buff[i]);
+                        if (GFX_MODE == 0)
+                            TextMode.putchar(buff[i]);
+                        else
+                            GfxMode.putchar(buff[i]);
                     }
                 } else if (is_short_short == 1) {
                     int8_t n = va_arg(args, int);
@@ -115,7 +134,10 @@ void hkStdIo::vkprint(const char *fmt, va_list args) {
                     }
 
                     for (int i = 0; buff[i]; i++) {
-                        TextMode.putchar(buff[i]);
+                        if (GFX_MODE == 0)
+                            TextMode.putchar(buff[i]);
+                        else
+                            GfxMode.putchar(buff[i]);
                     }
                 } else if (is_short == 1) {
                     int16_t n = va_arg(args, int);
@@ -129,7 +151,10 @@ void hkStdIo::vkprint(const char *fmt, va_list args) {
                     }
 
                     for (int i = 0; buff[i]; i++) {
-                        TextMode.putchar(buff[i]);
+                        if (GFX_MODE == 0)
+                            TextMode.putchar(buff[i]);
+                        else
+                            GfxMode.putchar(buff[i]);
                     }
                 } else {
                     int16_t n = va_arg(args, int);
@@ -143,7 +168,10 @@ void hkStdIo::vkprint(const char *fmt, va_list args) {
                     }
 
                     for (int i = 0; buff[i]; i++) {
-                        TextMode.putchar(buff[i]);
+                        if (GFX_MODE == 0)
+                            TextMode.putchar(buff[i]);
+                        else
+                            GfxMode.putchar(buff[i]);
                     }
                 }
 
@@ -156,7 +184,10 @@ void hkStdIo::vkprint(const char *fmt, va_list args) {
                     char buff[32];
                     fnumber_to_string(n, 10, buff, precision);
                     for (int i = 0; buff[i]; i++) {
-                        TextMode.putchar(buff[i]);
+                        if (GFX_MODE == 0)
+                            TextMode.putchar(buff[i]);
+                        else
+                            GfxMode.putchar(buff[i]);
                     }
                 } else {
                     double n = va_arg(args, double);
@@ -164,7 +195,10 @@ void hkStdIo::vkprint(const char *fmt, va_list args) {
                     char buff[32];
                     fnumber_to_string(n, 10, buff, precision);
                     for (int i = 0; buff[i]; i++) {
-                        TextMode.putchar(buff[i]);
+                        if (GFX_MODE == 0)
+                            TextMode.putchar(buff[i]);
+                        else
+                            GfxMode.putchar(buff[i]);
                     }
                 }
 
@@ -193,7 +227,10 @@ void hkStdIo::vkprint(const char *fmt, va_list args) {
                 }
 
                 for (int i = 0; buff[i]; i++) {
-                    TextMode.putchar(buff[i]);
+                    if (GFX_MODE == 0)
+                        TextMode.putchar(buff[i]);
+                    else
+                        GfxMode.putchar(buff[i]);
                 }
 
                 break;
@@ -212,7 +249,10 @@ void hkStdIo::vkprint(const char *fmt, va_list args) {
                     }
 
                     for (int i = 0; buff[i]; i++) {
-                        TextMode.putchar(buff[i]);
+                        if (GFX_MODE == 0)
+                            TextMode.putchar(buff[i]);
+                        else
+                            GfxMode.putchar(buff[i]);
                     }
                 } else if (is_long == 1) {
                     uint32_t n = va_arg(args, unsigned long);
@@ -226,7 +266,10 @@ void hkStdIo::vkprint(const char *fmt, va_list args) {
                     }
 
                     for (int i = 0; buff[i]; i++) {
-                        TextMode.putchar(buff[i]);
+                        if (GFX_MODE == 0)
+                            TextMode.putchar(buff[i]);
+                        else
+                            GfxMode.putchar(buff[i]);
                     }
                 } else if (is_short_short == 1) {
                     uint8_t n = va_arg(args, unsigned int);
@@ -240,7 +283,10 @@ void hkStdIo::vkprint(const char *fmt, va_list args) {
                     }
 
                     for (int i = 0; buff[i]; i++) {
-                        TextMode.putchar(buff[i]);
+                        if (GFX_MODE == 0)
+                            TextMode.putchar(buff[i]);
+                        else
+                            GfxMode.putchar(buff[i]);
                     }
                 } else if (is_short == 1) {
                     uint16_t n = va_arg(args, unsigned int);
@@ -254,7 +300,10 @@ void hkStdIo::vkprint(const char *fmt, va_list args) {
                     }
 
                     for (int i = 0; buff[i]; i++) {
-                        TextMode.putchar(buff[i]);
+                        if (GFX_MODE == 0)
+                            TextMode.putchar(buff[i]);
+                        else
+                            GfxMode.putchar(buff[i]);
                     }
                 } else {
                     uint16_t n = va_arg(args, unsigned int);
@@ -268,7 +317,10 @@ void hkStdIo::vkprint(const char *fmt, va_list args) {
                     }
 
                     for (int i = 0; buff[i]; i++) {
-                        TextMode.putchar(buff[i]);
+                        if (GFX_MODE == 0)
+                            TextMode.putchar(buff[i]);
+                        else
+                            GfxMode.putchar(buff[i]);
                     }
                 }
 
@@ -288,7 +340,10 @@ void hkStdIo::vkprint(const char *fmt, va_list args) {
                     }
 
                     for (int i = 0; buff[i]; i++) {
-                        TextMode.putchar(buff[i]);
+                        if (GFX_MODE == 0)
+                            TextMode.putchar(buff[i]);
+                        else
+                            GfxMode.putchar(buff[i]);
                     }
                 } else if (is_long == 1) {
                     uint32_t n = va_arg(args, unsigned long);
@@ -302,7 +357,10 @@ void hkStdIo::vkprint(const char *fmt, va_list args) {
                     }
 
                     for (int i = 0; buff[i]; i++) {
-                        TextMode.putchar(buff[i]);
+                        if (GFX_MODE == 0)
+                            TextMode.putchar(buff[i]);
+                        else
+                            GfxMode.putchar(buff[i]);
                     }
                 } else if (is_short_short == 1) {
                     uint8_t n = va_arg(args, unsigned int);
@@ -316,7 +374,10 @@ void hkStdIo::vkprint(const char *fmt, va_list args) {
                     }
 
                     for (int i = 0; buff[i]; i++) {
-                        TextMode.putchar(buff[i]);
+                        if (GFX_MODE == 0)
+                            TextMode.putchar(buff[i]);
+                        else
+                            GfxMode.putchar(buff[i]);
                     }
                 } else if (is_short == 1) {
                     uint16_t n = va_arg(args, unsigned int);
@@ -330,7 +391,10 @@ void hkStdIo::vkprint(const char *fmt, va_list args) {
                     }
 
                     for (int i = 0; buff[i]; i++) {
-                        TextMode.putchar(buff[i]);
+                        if (GFX_MODE == 0)
+                            TextMode.putchar(buff[i]);
+                        else
+                            GfxMode.putchar(buff[i]);
                     }
                 } else {
                     uint16_t n = va_arg(args, unsigned int);
@@ -344,21 +408,33 @@ void hkStdIo::vkprint(const char *fmt, va_list args) {
                     }
 
                     for (int i = 0; buff[i]; i++) {
-                        TextMode.putchar(buff[i]);
+                        if (GFX_MODE == 0)
+                            TextMode.putchar(buff[i]);
+                        else
+                            GfxMode.putchar(buff[i]);
                     }
                 }
 
                 break;
             }
             case 'p': {
-                TextMode.putchar('0');
-                TextMode.putchar('x');
+                if (GFX_MODE == 0)
+                    TextMode.putchar('0');
+                else
+                    GfxMode.putchar('0');
+                if (GFX_MODE == 0)
+                    TextMode.putchar('x');
+                else
+                    GfxMode.putchar('x');
 
                 void *n = va_arg(args, void *);
                 char buff[32];
                 unsigned_number_to_string((uint64_t)n, 16, buff, 0);
                 for (int i = 0; buff[i]; i++) {
-                    TextMode.putchar(buff[i]);
+                    if (GFX_MODE == 0)
+                        TextMode.putchar(buff[i]);
+                    else
+                        GfxMode.putchar(buff[i]);
                 }
 
                 break;
