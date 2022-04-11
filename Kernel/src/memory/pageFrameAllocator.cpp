@@ -23,7 +23,7 @@ void PageFrameAllocator::ReadMemoryMap(stivale2_struct* info) {
     size_t LargestFreeMemorySegmentSize = 0;
 
     for (int i = 0; i < MemoryMapEntries; i++) {
-        if (memory_map->memmap[i].type == 1) { // type = EfiConventionalMemory
+        if (memory_map->memmap[i].type == 1 || memory_map->memmap[i].type == 0x1000) { // type = EfiConventionalMemory
             if (memory_map->memmap[i].length > LargestFreeMemorySegmentSize) {
                 LargestFreeMemorySegment = (void *)memory_map->memmap[i].base;
                 LargestFreeMemorySegmentSize = memory_map->memmap[i].length;
@@ -39,7 +39,7 @@ void PageFrameAllocator::ReadMemoryMap(stivale2_struct* info) {
 
     ReservePages(0, MemorySize / 4096 + 1);
     for (int i = 0; i < memory_map->entries; i++){
-		if (memory_map->memmap[i].type == STIVALE2_MMAP_USABLE) { 
+		if (memory_map->memmap[i].type == STIVALE2_MMAP_USABLE || memory_map->memmap[i].type == 0x1000) { 
 			UnreservePages((void*) memory_map->memmap[i].base, (memory_map->memmap[i].length / 0x1000) + 1);
 		}
 	}

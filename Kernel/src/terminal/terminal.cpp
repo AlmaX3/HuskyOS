@@ -61,6 +61,7 @@ void gfxmode::initializeFramebuffer(stivale2_struct_tag_framebuffer* framebuffer
     ssfn_dst.p = fb_pitch;
     ssfn_dst.x = 0;
     ssfn_dst.y = 0;
+    ssfn_dst.fg = 0xffffff;
 
     GFX_MODE = 1;
 }
@@ -84,7 +85,7 @@ void gfxmode::framebuffer_move_one_row_up(void)
     }
 }
 
-void gfxmode::putcharonTerm(const char Char, int x, int y, uint32_t fg) {
+void gfxmode::putcharonTerm(const char Char, int x, int y) {
 
 
     if (ssfn_dst.x + charWidth > charHeight) // here too problematic
@@ -93,18 +94,17 @@ void gfxmode::putcharonTerm(const char Char, int x, int y, uint32_t fg) {
         ssfn_dst.y += charHeight;
     }
 
+
+    ssfn_dst.x = x;
+    ssfn_dst.y = y;
+
+
     if (ssfn_dst.y >= fb_height) // this is problematic cuz don't do this when backspace
     {
         ssfn_dst.x = 0;
         ssfn_dst.y = fb_height - charHeight;
         framebuffer_move_one_row_up();
     }
-    
-
-    ssfn_dst.x = x;
-    ssfn_dst.y = y;
-
-    ssfn_dst.fg = fg;
 
     ssfn_putc(Char);
 
@@ -114,12 +114,12 @@ void gfxmode::putchar(const char Char) {
     switch (Char)
     {
     case '\n':
-        cursor.x += 0;
+        cursor.x = 0;
         cursor.y += charHeight;
         break;
     
     default:
-        putcharonTerm(Char, cursor.x, cursor.y, 0xffffff);
+        putcharonTerm(Char, cursor.x, cursor.y);
         cursor.x += charWidth;
         break;
     }
@@ -130,6 +130,19 @@ void gfxmode::framebufferDrawPixel(int x, int y, uint32_t color) {
     uint32_t *fb = (uint32_t *)fb_addr;
 
     fb[fb_index] = color;
+}
+
+void gfxmode::changefg(uint32_t color) {
+    ssfn_dst.fg = color;
+}
+
+void gfxmode::putstring(const char* string){
+    while (*string)
+    {
+        putchar(*string);
+        string++;
+    }
+    
 }
 
 gfxmode GfxMode;

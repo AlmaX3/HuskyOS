@@ -28,8 +28,6 @@ extern uint64_t end;
 void Kernel::makeGDT() {
     setup_gdt();
     HuskyStandardOutput.kprint("[ GDT STATUS ] INITIALIZED\n");
-   
-    
 }
 
 void Kernel::KernelStart(struct stivale2_struct *stivale2_struct) {
@@ -66,8 +64,8 @@ void Kernel::KernelStart(struct stivale2_struct *stivale2_struct) {
         GlobalPageTableManager.MapMemory((void *)physaddr + 0xffff800000000000, (void *)physaddr);
     }
 
-    stivale2_struct_tag_kernel_base_address* kernelBaseAddrStruct = (stivale2_struct_tag_kernel_base_address *)(stivale2_get_tag(stivale2_struct ,STIVALE2_STRUCT_TAG_KERNEL_BASE_ADDRESS_ID));
-    stivale2_struct_tag_pmrs * pmrsStruct = (stivale2_struct_tag_pmrs *)(stivale2_get_tag(stivale2_struct, STIVALE2_STRUCT_TAG_PMRS_ID));
+    stivale2_struct_tag_kernel_base_address *kernelBaseAddrStruct = (stivale2_struct_tag_kernel_base_address *)(stivale2_get_tag(stivale2_struct, STIVALE2_STRUCT_TAG_KERNEL_BASE_ADDRESS_ID));
+    stivale2_struct_tag_pmrs *pmrsStruct = (stivale2_struct_tag_pmrs *)(stivale2_get_tag(stivale2_struct, STIVALE2_STRUCT_TAG_PMRS_ID));
     for (uint64_t pmrIndex = 0; pmrIndex < pmrsStruct->entries; ++pmrIndex) {
         stivale2_pmr pmr = pmrsStruct->pmrs[pmrIndex];
         for (uint64_t pmrVirtAddr = pmr.base; pmrVirtAddr < pmr.base + pmr.length; pmrVirtAddr += 0x1000) {
@@ -75,8 +73,6 @@ void Kernel::KernelStart(struct stivale2_struct *stivale2_struct) {
             GlobalPageTableManager.MapMemory((void *)(pmrVirtAddr), (void *)(physAddr));
         }
     }
-
-
 
     HuskyStandardOutput.kprint("\nINSERTING INTO CR3\n");
     __asm__ __volatile__("mov %0, %%cr3"
@@ -86,10 +82,20 @@ void Kernel::KernelStart(struct stivale2_struct *stivale2_struct) {
 
     initializeHeap((void *)0x00001000000, 0x10);
 
-    stivale2_struct_tag_framebuffer* framebuffer = (stivale2_struct_tag_framebuffer*)stivale2_get_tag(stivale2_struct, STIVALE2_STRUCT_TAG_FRAMEBUFFER_ID); 
+    stivale2_struct_tag_framebuffer *framebuffer = (stivale2_struct_tag_framebuffer *)stivale2_get_tag(stivale2_struct, STIVALE2_STRUCT_TAG_FRAMEBUFFER_ID);
     GfxMode.initializeFramebuffer(framebuffer);
-    
-    HuskyStandardOutput.kprint("Hello, from GFX!");
+
+    HuskyStandardOutput.statuslog(0xff00ff, "Framebuffer", "initialized.\n");
+    HuskyStandardOutput.statuslog(0xff00ff, "Framebuffer", "width: %dpx\n", framebuffer->framebuffer_width);
+    HuskyStandardOutput.statuslog(0xff00ff, "Framebuffer", "height: %dpx\n", framebuffer->framebuffer_height);
+    HuskyStandardOutput.statuslog(0xff00ff, "Framebuffer", "pitch: %d\n", framebuffer->framebuffer_pitch);
+
+    HuskyStandardOutput.statuslog(0x0ff0ff, "Memory", "Free mem: %lld kb\n", GlobalAllocator.GetFreeRAM() / 1024);
+    HuskyStandardOutput.statuslog(0x0ff0ff, "Memory", "Used mem: %lld kb\n", GlobalAllocator.GetUsedRAM() / 1024);
+    HuskyStandardOutput.statuslog(0x0ff0ff, "Memory", "Reserved mem: %lld kb\n", GlobalAllocator.GetReservedRAM() / 1024);
+    HuskyStandardOutput.statuslog(0x0ff0ff, "Memory", "Usage percentage: %lld%%\n", (GlobalAllocator.GetUsedRAM() + GlobalAllocator.GetReservedRAM() / 1024) / (MemFunc.GetAllFreeMemory(memmap_str_tag) / 1024));
+
+
     for (;;) {
         asm("hlt");
     }

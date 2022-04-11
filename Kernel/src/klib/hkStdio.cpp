@@ -470,4 +470,20 @@ void hkStdIo::kprint(const char *fmt, ...) {
     va_end(args);
 }
 
+void hkStdIo::statuslog(uint32_t color, const char* status, const char* fmt, ...){
+    va_list args;
+
+    va_start(args, fmt);
+    
+    GfxMode.changefg(color);
+    GfxMode.putchar('[');
+    GfxMode.putstring(status);
+    GfxMode.putchar(']');
+    GfxMode.putchar(' ');
+    GfxMode.changefg(0xffffff);
+    vkprint(fmt, args);
+
+    va_end(args);
+}
+
 hkStdIo HuskyStandardOutput;

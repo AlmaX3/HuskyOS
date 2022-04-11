@@ -25,9 +25,11 @@ class gfxmode {
     public:
         void initializeFramebuffer(stivale2_struct_tag_framebuffer* framebuffer);
         void framebufferDrawPixel(int x, int y, uint32_t color);
-        void putcharonTerm(const char Char, int x, int y, uint32_t fg);
+        void putcharonTerm(const char Char, int x, int y);
         void putchar(const char Char);
         void framebuffer_move_one_row_up(void);
+        void changefg(uint32_t color);
+        void putstring(const char* string);
     private:
         Cursor cursor;
         uint64_t fb_addr;
