@@ -1,5 +1,4 @@
 [extern intr_common_handler_c]
-[extern halt_cpu]
 
 %macro intr_stub 1
 	GLOBAL intr_stub_%1
@@ -105,9 +104,6 @@ intr_stub 46
 intr_stub 47
 
 intr_stub 255
-
-;# intr_common_handler-signature: void intr_common_handler()
-;# intr_common_handler-doc: The common interrupt handler. Every interrupt except for the syscall lands here first. Calls the init_comon_handler_c function.
 
 intr_common_handler:
 	; cli
