@@ -4,6 +4,10 @@
 #include <isr.h>
 #include <idt.h>
 
+#define BUFFERSIZE 8192 * 2
+
+extern char buffer[BUFFERSIZE];
+extern int index; 
 
 #define KB_CONTROLLER_DATA	0x60 // keyboard controller data register
 #define KB_CONTROLLER_COMMAND	0x64 // keyboard controller command register

@@ -31,6 +31,7 @@ class gfxmode {
         void changefg(uint32_t color);
         void putstring(const char* string);
         void BackspaceDrawOver(int column, int row);
+        void DrawLine(uint32_t color, int length, int thickness);
     private:
         Cursor cursor;
         uint64_t fb_addr;

@@ -102,6 +102,8 @@ void Kernel::KernelStart(struct stivale2_struct *stivale2_struct) {
     makeIDT();
 
     activate_keyboard_processing();
+    
+    
 
     for (;;) {
         asm("hlt");
