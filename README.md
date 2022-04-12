@@ -11,8 +11,8 @@ A hobby operating system that runs on x86-64. The main goal is to have a modern 
 - [x] IDT
 - [x] ISR
 - [x] Interrupts
-- [ ] Keyboard support
-- [ ] Mouse support
+- [x] Keyboard support
+- [ ] Mouse support (Skipping... Maybe later.)
 - [ ] ACPI
 - [ ] VFS
 - [ ] File System (Ext2)
