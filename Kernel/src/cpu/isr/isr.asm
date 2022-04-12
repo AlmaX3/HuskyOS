@@ -1,5 +1,4 @@
 [extern intr_common_handler_c]
-[extern halt_cpu]
 
 %macro intr_stub 1
 	GLOBAL intr_stub_%1
