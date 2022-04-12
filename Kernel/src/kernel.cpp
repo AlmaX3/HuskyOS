@@ -26,8 +26,12 @@ extern uint64_t _KernelStart;
 extern uint64_t end;
 
 void Kernel::makeGDT() {
-    setup_gdt();
-    HuskyStandardOutput.kprint("[ GDT STATUS ] INITIALIZED\n");
+    gdt_init();
+
+}
+
+void Kernel::makeIDT() {
+    interrupts_init();
 }
 
 void Kernel::KernelStart(struct stivale2_struct *stivale2_struct) {
@@ -94,7 +98,10 @@ void Kernel::KernelStart(struct stivale2_struct *stivale2_struct) {
     HuskyStandardOutput.statuslog(0x0ff0ff, "Memory", "Used mem: %lld kb\n", GlobalAllocator.GetUsedRAM() / 1024);
     HuskyStandardOutput.statuslog(0x0ff0ff, "Memory", "Reserved mem: %lld kb\n", GlobalAllocator.GetReservedRAM() / 1024);
     HuskyStandardOutput.statuslog(0x0ff0ff, "Memory", "Usage percentage: %lld%%\n", (GlobalAllocator.GetUsedRAM() + GlobalAllocator.GetReservedRAM() / 1024) / (MemFunc.GetAllFreeMemory(memmap_str_tag) / 1024));
+    makeGDT();
+    makeIDT();
 
+    activate_keyboard_processing();
 
     for (;;) {
         asm("hlt");

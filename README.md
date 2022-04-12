@@ -7,10 +7,10 @@ A hobby operating system that runs on x86-64. The main goal is to have a modern 
 - [x] "Hello World" on screen
 - [x] Paging
 - [x] Framebuffer
-- [ ] Global Descriptor Table
-- [ ] IDT
-- [ ] ISR
-- [ ] Interrupts
+- [x] Global Descriptor Table
+- [x] IDT
+- [x] ISR
+- [x] Interrupts
 - [ ] Keyboard support
 - [ ] Mouse support
 - [ ] ACPI
@@ -20,6 +20,7 @@ A hobby operating system that runs on x86-64. The main goal is to have a modern 
 
 #### Future
 - [ ] Userspace
+- [ ] Shell
 - [ ] GUI
 - [ ] Custom executables
 

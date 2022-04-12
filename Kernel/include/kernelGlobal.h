@@ -11,11 +11,15 @@
 #include <PageTableManager.h>
 #include <paging.h>
 #include "heap.h"
+#include "idt.h"
+#include "isr.h"
+#include <keyboard.h>
 
 class Kernel {
 public:
     void KernelStart(struct stivale2_struct *stivale2_struct);
     void makeGDT();
+    void makeIDT();
     stivale2_tag *stivale2_get_tag(struct stivale2_struct *stivale2_struct, uint64_t id);
 };
 extern Kernel hKernel;

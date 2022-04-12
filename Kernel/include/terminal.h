@@ -30,6 +30,7 @@ class gfxmode {
         void framebuffer_move_one_row_up(void);
         void changefg(uint32_t color);
         void putstring(const char* string);
+        void BackspaceDrawOver(int column, int row);
     private:
         Cursor cursor;
         uint64_t fb_addr;

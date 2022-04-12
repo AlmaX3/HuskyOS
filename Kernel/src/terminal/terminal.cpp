@@ -95,6 +95,8 @@ void gfxmode::putcharonTerm(const char Char, int x, int y) {
     }
 
 
+
+
     ssfn_dst.x = x;
     ssfn_dst.y = y;
 
@@ -103,21 +105,59 @@ void gfxmode::putcharonTerm(const char Char, int x, int y) {
     {
         ssfn_dst.x = 0;
         ssfn_dst.y = fb_height - charHeight;
+
+
+        cursor.x = 0;
+        cursor.y = fb_height - charHeight;
+
         framebuffer_move_one_row_up();
+    }
+
+    if(ssfn_dst.x >= fb_width) {
+        
+        ssfn_dst.x = 0;
+        ssfn_dst.y += charHeight;
+
+        cursor.x = 0;
+        cursor.y += charHeight;
     }
 
     ssfn_putc(Char);
 
 }
 
+void gfxmode::BackspaceDrawOver(int column, int row){
+    uint32_t *fb = (uint32_t *)fb_addr;
+        for (size_t i = 0; i < charHeight; i++)
+        {
+            for (size_t j = 0; j < charWidth; j++)
+            {
+                size_t current_index = (column+i) * (fb_pitch / sizeof(uint32_t)) + (row+j);
+                fb[current_index] = ssfn_dst.bg;        
+            }
+        }
+}
+
 void gfxmode::putchar(const char Char) {
     switch (Char)
     {
+    case '\r':
     case '\n':
+        if(cursor.y >= fb_height)
+            framebuffer_move_one_row_up();
+
         cursor.x = 0;
         cursor.y += charHeight;
         break;
-    
+    case '\b':
+        if(cursor.x == 0){
+            cursor.y -= charHeight;
+            cursor.x = fb_width;
+        }
+
+        cursor.x -= charWidth;
+        BackspaceDrawOver(cursor.y, cursor.x);
+        break;
     default:
         putcharonTerm(Char, cursor.x, cursor.y);
         cursor.x += charWidth;

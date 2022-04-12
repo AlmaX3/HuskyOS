@@ -475,15 +475,30 @@ void hkStdIo::statuslog(uint32_t color, const char* status, const char* fmt, ...
 
     va_start(args, fmt);
     
-    GfxMode.changefg(color);
     GfxMode.putchar('[');
+    GfxMode.putchar(' ');
+    GfxMode.changefg(color);
     GfxMode.putstring(status);
+    GfxMode.changefg(0xffffff);
+    GfxMode.putchar(' ');
     GfxMode.putchar(']');
     GfxMode.putchar(' ');
-    GfxMode.changefg(0xffffff);
     vkprint(fmt, args);
 
     va_end(args);
 }
 
+
+void hkStdIo::panic(const char* fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+
+    GfxMode.changefg(0xff0000);
+    kprint("KERNEL PANIC: \n");
+    vkprint(fmt, args);
+
+    va_end(args);
+
+    __asm__ __volatile__ ("hlt");
+}
 hkStdIo HuskyStandardOutput;
