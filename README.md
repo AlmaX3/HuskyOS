@@ -14,6 +14,7 @@ A hobby operating system that runs on x86-64. The main goal is to have a modern 
 - [x] Keyboard support
 - [ ] Mouse support (Skipping... Maybe later.)
 - [ ] ACPI
+- [ ] AHCI
 - [ ] VFS
 - [ ] File System (Ext2)
 - [ ] Elf Loader

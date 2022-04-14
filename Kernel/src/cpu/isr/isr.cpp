@@ -7,37 +7,37 @@ idt_t idtr;
 //MAKE INTERRUPTS.
 
 char *interruptNames[] = {
-    "<!>DBZ<!>   |   DIVIDE BY ZERO EXCEPTION.",
-    "<!>DBG<!>   |   DEBUG EXCEPTION.",
-    "<!>NMI<!>   |   NON-MASKABLE INTERRUPT EXCEPTION.",
-    "<!>BRP<!>   |   BREAKPOINT EXCEPTION.",
-    "<!>OFW<!>   |   OVERFLOW EXCEPTION.",
-    "<!>BNR<!>   |   BOUND RANGE EXCEPTION.",
-    "<!>IVO<!>   |   INVALID OPCODE EXCEPTION.",
-    "<!>DNA<!>   |   DEVICE NOT AVAILABLE EXCEPTION.",
-    "<!>DBF<!>   |   DOUBLE FAULT EXCEPTION.",
-    "<!>CSO<!>   |   COPROCESSOR SEGMENT OVERRUN EXCEPTION.",
-    "<!>ITS<!>   |   INVALID TSS EXCEPTION.",
-    "<!>SNP<!>   |   SEGMENT NOT PRESENT EXCEPTION.",
-    "<!>STF<!>   |   STACK FAULT EXCEPTION.",
-    "<!>GRP<!>   |   GENERAL PROTECTION EXCEPTION.",
-    "<!>PGF<!>   |   PAGE FAULT EXCEPTION.",
-    "<!>RSV<!>   |   RESERVED EXCEPTION.",
-    "<!>XFP<!>   |   X87 FLOATING EXCEPTION.",
-    "<!>ALC<!>   |   ALIGNMENT CHECK EXCEPTION.",
-    "<!>MCC<!>   |   MACHINE CHECK EXCEPTION.",
-    "<!>SFP<!>   |   SIMD FLOATING POINT EXCEPTION.",
-    "<!>SEH<!>   |   SECURITY-SENSITIVE EVENT IN HOST EXCEPTION.",
-    "<!>RSV<!>   |   RESERVED EXCEPTION.",
-    "<!>RSV<!>   |   RESERVED EXCEPTION.",
-    "<!>RSV<!>   |   RESERVED EXCEPTION.",
-    "<!>RSV<!>   |   RESERVED EXCEPTION.",
-    "<!>RSV<!>   |   RESERVED EXCEPTION.",
-    "<!>RSV<!>   |   RESERVED EXCEPTION.",
-    "<!>RSV<!>   |   RESERVED EXCEPTION.",
-    "<!>RSV<!>   |   RESERVED EXCEPTION.",
-    "<!>RSV<!>   |   RESERVED EXCEPTION.",
-    "<!>RSV<!>   |   RESERVED EXCEPTION.",
+    "⚠DBZ⚠   |   DIVIDE BY ZERO EXCEPTION.",
+    "⚠DBG⚠   |   DEBUG EXCEPTION.",
+    "⚠NMI⚠   |   NON-MASKABLE INTERRUPT EXCEPTION.",
+    "⚠BRP⚠   |   BREAKPOINT EXCEPTION.",
+    "⚠OFW⚠   |   OVERFLOW EXCEPTION.",
+    "⚠BNR⚠   |   BOUND RANGE EXCEPTION.",
+    "⚠IVO⚠   |   INVALID OPCODE EXCEPTION.",
+    "⚠DNA⚠   |   DEVICE NOT AVAILABLE EXCEPTION.",
+    "⚠DBF⚠   |   DOUBLE FAULT EXCEPTION.",
+    "⚠CSO⚠   |   COPROCESSOR SEGMENT OVERRUN EXCEPTION.",
+    "⚠ITS⚠   |   INVALID TSS EXCEPTION.",
+    "⚠SNP⚠   |   SEGMENT NOT PRESENT EXCEPTION.",
+    "⚠STF⚠   |   STACK FAULT EXCEPTION.",
+    "⚠GRP⚠   |   GENERAL PROTECTION EXCEPTION.",
+    "⚠PGF⚠   |   PAGE FAULT EXCEPTION.",
+    "⚠RSV⚠   |   RESERVED EXCEPTION.",
+    "⚠XFP⚠   |   X87 FLOATING EXCEPTION.",
+    "⚠ALC⚠   |   ALIGNMENT CHECK EXCEPTION.",
+    "⚠MCC⚠   |   MACHINE CHECK EXCEPTION.",
+    "⚠SFP⚠   |   SIMD FLOATING POINT EXCEPTION.",
+    "⚠SEH⚠   |   SECURITY-SENSITIVE EVENT IN HOST EXCEPTION.",
+    "⚠RSV⚠   |   RESERVED EXCEPTION.",
+    "⚠RSV⚠   |   RESERVED EXCEPTION.",
+    "⚠RSV⚠   |   RESERVED EXCEPTION.",
+    "⚠RSV⚠   |   RESERVED EXCEPTION.",
+    "⚠RSV⚠   |   RESERVED EXCEPTION.",
+    "⚠RSV⚠   |   RESERVED EXCEPTION.",
+    "⚠RSV⚠   |   RESERVED EXCEPTION.",
+    "⚠RSV⚠   |   RESERVED EXCEPTION.",
+    "⚠RSV⚠   |   RESERVED EXCEPTION.",
+    "⚠RSV⚠   |   RESERVED EXCEPTION.",
 };
 
 char *get_interrupt_name(int interrupt_number) {
@@ -146,7 +146,7 @@ extern "C" void intr_common_handler_c(s_registers *regs) {
     IRQ_OFF;
     intr_handler_ptr handler = static_handlers[regs->interrupt_number - 32];
     if (regs->interrupt_number <= 0x1f) {
-        HuskyStandardOutput.panic("%s !!!\nRAX = %llx RBP = %llx RBX = %llx\nRCX = %llx RDI = %llx RDX = %llx\nRSI = %llx RSP = %llx\n", get_interrupt_name(regs->interrupt_number), regs->rax, regs->rbp, regs->rbx, regs->rcx, regs->rdi, regs->rdx, regs->rsi, regs->rsp);
+        HuskyStandardOutput.panic(regs, "If this is randomly appearing to you, and you don't know what causes this, please message Alma on Github (https://github.com/AlmaX3), so that he can look into it.\n");
     }
 
     if (regs->interrupt_number == 0xff) {

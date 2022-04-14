@@ -167,4 +167,5 @@ void keyboard_send_command(uint8_t command_byte);
 void keyboard_irq_handler(s_registers* regs);
 char keycode_to_ascii(KEYCODE_t keycode);
 void activate_keyboard_processing();
+void EnableKeyboard();
 void disable_keyboard_processing(void);

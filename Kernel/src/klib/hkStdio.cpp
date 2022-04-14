@@ -2,7 +2,6 @@
 #include <Utils.h>
 #include <hkStdio.h>
 #include <terminal.h>
-
 void hkStdIo::vkprint(const char *fmt, va_list args) {
     int state = 0;
 
@@ -489,14 +488,15 @@ void hkStdIo::statuslog(uint32_t color, const char* status, const char* fmt, ...
 }
 
 
-void hkStdIo::panic(const char* fmt, ...) {
+void hkStdIo::panic(s_registers* regs,const char* fmt, ...) {
     va_list args;
     va_start(args, fmt);
 
     GfxMode.changefg(0xff0000);
     kprint("KERNEL PANIC: \n");
-    vkprint(fmt, args);
+    kprint("%s\nRAX = %llx RBP = %llx RBX = %llx\nRCX = %llx RDI = %llx RDX = %llx\nRSI = %llx RSP = %llx\n", get_interrupt_name(regs->interrupt_number), regs->rax, regs->rbp, regs->rbx, regs->rcx, regs->rdi, regs->rdx, regs->rsi, regs->rsp);
 
+    vkprint(fmt, args);
     va_end(args);
 
     __asm__ __volatile__ ("hlt");

@@ -175,8 +175,7 @@ void keyboard_irq_handler(s_registers *regs) {
         else if (key <= 0x7F)
             key_info.ascii_character = keycode_to_ascii((KEYCODE_t)key);
 
-
-        if(index >= BUFFERSIZE){
+        if (index >= BUFFERSIZE) {
             memset((void *)buffer, 0, BUFFERSIZE);
             index = 0;
         }
@@ -184,23 +183,12 @@ void keyboard_irq_handler(s_registers *regs) {
         buffer[index] = key_info.ascii_character;
         index++;
 
-        GfxMode.putchar(key_info.ascii_character);
-
-        HuskyStandardOutput.kprint("\nbuffer: %s\n\n", buffer);
-    }
-
-    // final_handler(key_info);
-
-    /*
-        if ()
-        {
-        serial_set_color(TERM_RED);
-        debug("\n──────────────────────────────\n");
-        debug("⚠ UNKNOWN SCANCODE RECEIVED! ⚠\n\n");
-        debug("⤷ Scancode: 0x%x | Set: %d\n", scancode, scancode_set);
-        serial_set_color(TERM_COLOR_RESET);
+        if (is_keyboard_active == 1) {
+          
+        
+            GfxMode.putchar(key_info.ascii_character);
         }
-    */
+    }
 }
 
 // type change and conversion for upper- or lowercase if shift or capslock is pressed
@@ -305,10 +293,18 @@ char keycode_to_ascii(KEYCODE_t keycode) {
     return character;
 }
 
-void activate_keyboard_processing() {
+void EnableKeyboard() {
     keyboard_init();
     register_interrupt_handler(1, keyboard_irq_handler);
+    
+    is_keyboard_active = 0;
+}
 
+void activate_keyboard_processing() {
+      if(limit.x)
+        cursor.x = limit.x * GfxMode.charWidth;
+      if(limit.y)
+        cursor.y = limit.y * GfxMode.charHeight;
     is_keyboard_active = 1;
 }
 

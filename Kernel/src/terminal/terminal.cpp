@@ -110,6 +110,10 @@ void gfxmode::putcharonTerm(const char Char, int x, int y) {
     ssfn_putc(Char);
 }
 
+
+Cursor cursor;
+Cursor limit;
+
 void gfxmode::BackspaceDrawOver(int column, int row) {
     uint32_t *fb = (uint32_t *)fb_addr;
     for (size_t i = 0; i < charHeight; i++) {
@@ -121,6 +125,7 @@ void gfxmode::BackspaceDrawOver(int column, int row) {
 }
 
 void gfxmode::putchar(const char Char) {
+    
     switch (Char) {
     case '\r':
     case '\n':
@@ -133,6 +138,9 @@ void gfxmode::putchar(const char Char) {
         
         break;
     case '\b':
+        if(cursor.x == limit.x * charWidth && cursor.y == limit.y * charHeight)
+            return;
+
         if (cursor.x == 0) {
             cursor.y -= charHeight;
             cursor.x = fb_width;
@@ -146,6 +154,9 @@ void gfxmode::putchar(const char Char) {
         
         cursor.x -= charWidth;
         BackspaceDrawOver(cursor.y, cursor.x);
+        break;
+    case '\t':
+        putstring("     ");
         break;
     default:
         putcharonTerm(Char, cursor.x, cursor.y);
@@ -172,12 +183,12 @@ void gfxmode::putstring(const char *string) {
     }
 }
 
-void gfxmode::DrawLine(uint32_t color, int length, int thickness) {
+void gfxmode::DrawLine(uint32_t color, int length, int thickness, int x, int y) {
     uint32_t *fb = (uint32_t *)fb_addr;
     for (size_t i = 0; i < length; i++) {
         for (size_t j = 0; j < thickness; j++) {
 
-            size_t fb_index = j * (fb_pitch / sizeof(uint32_t)) + i;
+            size_t fb_index = (j + y) * (fb_pitch / sizeof(uint32_t)) + (i + x);
             fb[fb_index] = color;
         }
     }

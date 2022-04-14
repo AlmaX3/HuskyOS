@@ -101,8 +101,26 @@ void Kernel::KernelStart(struct stivale2_struct *stivale2_struct) {
     makeGDT();
     makeIDT();
 
+    EnableKeyboard();
+
+    GfxMode.DrawLine(0xffffff, 10, 60, cursor.x, cursor.y);
+    GfxMode.DrawLine(0xffffff, 30, 10, cursor.x+10, cursor.y+25);
+    GfxMode.DrawLine(0xffffff, 10, 25, cursor.x+30, cursor.y+35);
+
+    GfxMode.DrawLine(0xffffff, 10, 40, cursor.x+50, cursor.y+10);
+    GfxMode.DrawLine(0xffffff, 40, 10, cursor.x+60, cursor.y);
+    GfxMode.DrawLine(0xffffff, 10, 40, cursor.x+100, cursor.y+10);
+    GfxMode.DrawLine(0xffffff, 40, 10, cursor.x+60, cursor.y+50);
+
+
+    GfxMode.DrawLine(0xffffff, 40, 10, cursor.x+130, cursor.y);
+    GfxMode.DrawLine(0xffffff, 10, 15, cursor.x+120, cursor.y+10);
+    GfxMode.DrawLine(0xffffff, 30, 10, cursor.x+130, cursor.y+25);
+    GfxMode.DrawLine(0xffffff, 10, 15, cursor.x+160, cursor.y+35);
+    GfxMode.DrawLine(0xffffff, 40, 10, cursor.x+120, cursor.y+50);
+
+    limit = {20, cursor.y / GfxMode.charHeight};
     activate_keyboard_processing();
-    
     
 
     for (;;) {

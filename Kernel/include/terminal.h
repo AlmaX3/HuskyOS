@@ -31,16 +31,17 @@ class gfxmode {
         void changefg(uint32_t color);
         void putstring(const char* string);
         void BackspaceDrawOver(int column, int row);
-        void DrawLine(uint32_t color, int length, int thickness);
+        void DrawLine(uint32_t color, int length, int thickness, int x, int y);
+        uint8_t charHeight;
+        uint8_t charWidth;
     private:
-        Cursor cursor;
         uint64_t fb_addr;
         uint32_t fb_width;
         uint32_t fb_height;
         uint32_t fb_pitch;
         uint32_t fb_bpp;
-        uint8_t charHeight;
-        uint8_t charWidth;
 };
 extern textmode TextMode;
 extern gfxmode GfxMode;
+extern Cursor cursor;
+extern Cursor limit;
