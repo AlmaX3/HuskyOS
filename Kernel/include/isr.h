@@ -101,6 +101,8 @@ extern "C" void intr_stub_47(void);
 
 extern "C" void intr_stub_255(void);
 
+void irq_check(int irq_no);
+
 class interrupt_handler {
 protected:
     uint8_t int_num;

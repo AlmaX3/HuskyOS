@@ -20,6 +20,19 @@ class Cursor {
         uint32_t y;
 };
 
+enum gfxColor {
+    BACKGROUND = 0x002b36,
+    TEXT = 0x93a1a1,
+    YELLOW = 0xb58900,
+    ORANGE = 0xcb4b16,
+    RED = 0xdc322f,
+    MAGENTA = 0xd33682,
+    VIOLET = 0x6c71c4,
+    BLUE = 0x268bd2,
+    CYAN = 0x2aa198,
+    GREEN = 0x859900  
+};
+
 
 class gfxmode {
     public:
@@ -34,6 +47,8 @@ class gfxmode {
         void DrawLine(uint32_t color, int length, int thickness, int x, int y);
         uint8_t charHeight;
         uint8_t charWidth;
+        uint32_t textColor;
+        uint32_t bgColor;
     private:
         uint64_t fb_addr;
         uint32_t fb_width;

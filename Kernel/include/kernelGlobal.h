@@ -14,6 +14,7 @@
 #include "idt.h"
 #include "isr.h"
 #include <keyboard.h>
+#include <pit.h>
 
 class Kernel {
 public:

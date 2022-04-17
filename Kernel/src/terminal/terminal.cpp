@@ -38,12 +38,14 @@ void gfxmode::initializeFramebuffer(stivale2_struct_tag_framebuffer *framebuffer
     fb_height = framebuffer->framebuffer_height;
     fb_pitch = framebuffer->framebuffer_pitch;
     fb_bpp = framebuffer->framebuffer_bpp;
+    textColor = TEXT;
+    bgColor = BACKGROUND;
     charHeight = 16;
     charWidth = 8;
 
     for (int y = 0; y < fb_height; y++) {
         for (int x = 0; x < fb_width; x++) {
-            framebufferDrawPixel(x, y, 0x000000);
+            framebufferDrawPixel(x, y, bgColor);
         }
     }
     cursor.x = 0;
@@ -56,10 +58,11 @@ void gfxmode::initializeFramebuffer(stivale2_struct_tag_framebuffer *framebuffer
     ssfn_dst.p = fb_pitch;
     ssfn_dst.x = 0;
     ssfn_dst.y = 0;
-    ssfn_dst.fg = 0xffffff;
+    ssfn_dst.fg = textColor;
 
     GFX_MODE = 1;
 }
+
 
 void gfxmode::framebuffer_move_one_row_up(void) {
     uint32_t *fb = (uint32_t *)fb_addr;

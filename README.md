@@ -1,6 +1,6 @@
 # Husky Operating System
 
-A hobby operating system that runs on x86-64. The main goal is to have a modern general purpose Operating System with the philosophy of "An Operating System is a friend and a tool."
+A hobby operating system that runs on x86-64. The main goal is to have a modern general purpose Operating System
 
 ### Goals
 #### Near Future
@@ -11,6 +11,7 @@ A hobby operating system that runs on x86-64. The main goal is to have a modern 
 - [x] IDT
 - [x] ISR
 - [x] Interrupts
+- [x] PIT
 - [x] Keyboard support
 - [ ] Mouse support (Skipping... Maybe later.)
 - [ ] ACPI

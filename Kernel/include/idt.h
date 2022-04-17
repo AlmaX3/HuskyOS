@@ -1,7 +1,7 @@
 #pragma once
 #include <stdint.h>
 
-#define idt_ta_interrupt_gate 0b10001110
+#define idt_ta_interrupt_gate 0x8E
 #define idt_ta_call_gate 0b10001100
 #define idt_ta_trap_gate 0b10001111
 

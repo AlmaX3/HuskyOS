@@ -89,41 +89,27 @@ void Kernel::KernelStart(struct stivale2_struct *stivale2_struct) {
     stivale2_struct_tag_framebuffer *framebuffer = (stivale2_struct_tag_framebuffer *)stivale2_get_tag(stivale2_struct, STIVALE2_STRUCT_TAG_FRAMEBUFFER_ID);
     GfxMode.initializeFramebuffer(framebuffer);
 
-    HuskyStandardOutput.statuslog(0xff00ff, "Framebuffer", "initialized.\n");
-    HuskyStandardOutput.statuslog(0xff00ff, "Framebuffer", "width: %dpx\n", framebuffer->framebuffer_width);
-    HuskyStandardOutput.statuslog(0xff00ff, "Framebuffer", "height: %dpx\n", framebuffer->framebuffer_height);
-    HuskyStandardOutput.statuslog(0xff00ff, "Framebuffer", "pitch: %d\n", framebuffer->framebuffer_pitch);
+    HuskyStandardOutput.statuslog(MAGENTA, "Framebuffer", "initialized.\n");
+    HuskyStandardOutput.statuslog(MAGENTA, "Framebuffer", "width: %dpx\n", framebuffer->framebuffer_width);
+    HuskyStandardOutput.statuslog(MAGENTA, "Framebuffer", "height: %dpx\n", framebuffer->framebuffer_height);
+    HuskyStandardOutput.statuslog(MAGENTA, "Framebuffer", "pitch: %d\n", framebuffer->framebuffer_pitch);
 
-    HuskyStandardOutput.statuslog(0x0ff0ff, "Memory", "Free mem: %lld kb\n", GlobalAllocator.GetFreeRAM() / 1024);
-    HuskyStandardOutput.statuslog(0x0ff0ff, "Memory", "Used mem: %lld kb\n", GlobalAllocator.GetUsedRAM() / 1024);
-    HuskyStandardOutput.statuslog(0x0ff0ff, "Memory", "Reserved mem: %lld kb\n", GlobalAllocator.GetReservedRAM() / 1024);
-    HuskyStandardOutput.statuslog(0x0ff0ff, "Memory", "Usage percentage: %lld%%\n", (GlobalAllocator.GetUsedRAM() + GlobalAllocator.GetReservedRAM() / 1024) / (MemFunc.GetAllFreeMemory(memmap_str_tag) / 1024));
+    HuskyStandardOutput.statuslog(CYAN, "Memory", "Free mem: %lld kb\n", GlobalAllocator.GetFreeRAM() / 1024);
+    HuskyStandardOutput.statuslog(CYAN, "Memory", "Used mem: %lld kb\n", GlobalAllocator.GetUsedRAM() / 1024);
+    HuskyStandardOutput.statuslog(CYAN, "Memory", "Reserved mem: %lld kb\n", GlobalAllocator.GetReservedRAM() / 1024);
+    HuskyStandardOutput.statuslog(CYAN, "Memory", "Usage percentage: %lld%%\n", (GlobalAllocator.GetUsedRAM() + GlobalAllocator.GetReservedRAM() / 1024) / (MemFunc.GetAllFreeMemory(memmap_str_tag) / 1024));
     makeGDT();
     makeIDT();
-
+    timer_install();
     EnableKeyboard();
-
-    GfxMode.DrawLine(0xffffff, 10, 60, cursor.x, cursor.y);
-    GfxMode.DrawLine(0xffffff, 30, 10, cursor.x+10, cursor.y+25);
-    GfxMode.DrawLine(0xffffff, 10, 25, cursor.x+30, cursor.y+35);
-
-    GfxMode.DrawLine(0xffffff, 10, 40, cursor.x+50, cursor.y+10);
-    GfxMode.DrawLine(0xffffff, 40, 10, cursor.x+60, cursor.y);
-    GfxMode.DrawLine(0xffffff, 10, 40, cursor.x+100, cursor.y+10);
-    GfxMode.DrawLine(0xffffff, 40, 10, cursor.x+60, cursor.y+50);
-
-
-    GfxMode.DrawLine(0xffffff, 40, 10, cursor.x+130, cursor.y);
-    GfxMode.DrawLine(0xffffff, 10, 15, cursor.x+120, cursor.y+10);
-    GfxMode.DrawLine(0xffffff, 30, 10, cursor.x+130, cursor.y+25);
-    GfxMode.DrawLine(0xffffff, 10, 15, cursor.x+160, cursor.y+35);
-    GfxMode.DrawLine(0xffffff, 40, 10, cursor.x+120, cursor.y+50);
-
-    limit = {20, cursor.y / GfxMode.charHeight};
+   
+    setlimit(0, cursor.y / GfxMode.charHeight);
     activate_keyboard_processing();
+    stivale2_struct_tag_epoch *epoch = (stivale2_struct_tag_epoch*)stivale2_get_tag(stivale2_struct, STIVALE2_STRUCT_TAG_EPOCH_ID);
+    HuskyStandardOutput.kprint("%lld-%lld-%lldT%lld:%lld:%lld\n", epoch->epoch / 60 / 60 / 24 / 365 + 1970, epoch->epoch / 60 / 60 / 24 % 31 + 1, epoch->epoch / 60 / 60 % 24 + 1, epoch->epoch / 60 / 60, epoch->epoch % 60);
     
 
-    for (;;) {
+    while (true) {
         asm("hlt");
     }
 }

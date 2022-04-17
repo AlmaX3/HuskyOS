@@ -146,7 +146,7 @@ int strncmp(char *str1, char *str2, int len){
     
 }
 void io_wait() {
-    asm volatile ("outb %%al, $0x00" : : "a"(0));
+     inportw(0x80);
 }
 
 size_t strspn(const char * str,const char * accept) {

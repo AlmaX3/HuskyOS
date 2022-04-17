@@ -117,5 +117,5 @@ void gdt_init(void)
 
     _load_gdt_and_tss_asm(&gdt_pointer);
 
-    HuskyStandardOutput.statuslog(0xffff00, "GDT", "Initialized\n");
+    HuskyStandardOutput.statuslog(YELLOW, "GDT", "Initialized\n");
 }

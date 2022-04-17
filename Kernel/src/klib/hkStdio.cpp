@@ -478,7 +478,7 @@ void hkStdIo::statuslog(uint32_t color, const char* status, const char* fmt, ...
     GfxMode.putchar(' ');
     GfxMode.changefg(color);
     GfxMode.putstring(status);
-    GfxMode.changefg(0xffffff);
+    GfxMode.changefg(GfxMode.textColor);
     GfxMode.putchar(' ');
     GfxMode.putchar(']');
     GfxMode.putchar(' ');
@@ -493,7 +493,7 @@ void hkStdIo::panic(s_registers* regs,const char* fmt, ...) {
     va_start(args, fmt);
 
     GfxMode.changefg(0xff0000);
-    kprint("KERNEL PANIC: \n");
+    kprint("KERNEL PANIC: %lld - 0x%llx\n", regs->interrupt_number,regs->interrupt_number);
     kprint("%s\nRAX = %llx RBP = %llx RBX = %llx\nRCX = %llx RDI = %llx RDX = %llx\nRSI = %llx RSP = %llx\n", get_interrupt_name(regs->interrupt_number), regs->rax, regs->rbp, regs->rbx, regs->rcx, regs->rdi, regs->rdx, regs->rsi, regs->rsp);
 
     vkprint(fmt, args);

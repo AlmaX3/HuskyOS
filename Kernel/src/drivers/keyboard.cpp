@@ -2,6 +2,7 @@
 #include <hkStdio.h>
 #include <isr.h>
 #include <keyboard.h>
+#include <pic.h>
 #include <terminal.h>
 
 char buffer[BUFFERSIZE];
@@ -106,7 +107,7 @@ static uint8_t scrolllock = 0;
 
 // initialize the keyboard
 void keyboard_init(void) {
-
+    pic_clear_mask(1);
     memset((void *)buffer, 0, BUFFERSIZE);
     // clear the set mask for the keyboard IRQ
 
@@ -117,7 +118,7 @@ void keyboard_init(void) {
     // enable scanning (so that the keyboard will send scan codes)
     keyboard_send_command(0xF4);
 
-    HuskyStandardOutput.statuslog(0x00ffff, "Keyboard", "Initialized\n");
+    HuskyStandardOutput.statuslog(GREEN, "Keyboard", "Initialized\n");
 }
 
 void keyboard_send_command(uint8_t command_byte) {
@@ -184,8 +185,7 @@ void keyboard_irq_handler(s_registers *regs) {
         index++;
 
         if (is_keyboard_active == 1) {
-          
-        
+
             GfxMode.putchar(key_info.ascii_character);
         }
     }
@@ -296,15 +296,19 @@ char keycode_to_ascii(KEYCODE_t keycode) {
 void EnableKeyboard() {
     keyboard_init();
     register_interrupt_handler(1, keyboard_irq_handler);
-    
+
     is_keyboard_active = 0;
 }
 
-void activate_keyboard_processing() {
-      if(limit.x)
+void setlimit(uint32_t x, uint32_t y) {
+    limit = {x,y};
+    if (limit.x >= 0)
         cursor.x = limit.x * GfxMode.charWidth;
-      if(limit.y)
+    if (limit.y >= 0)
         cursor.y = limit.y * GfxMode.charHeight;
+}
+
+void activate_keyboard_processing() {
     is_keyboard_active = 1;
 }
 
