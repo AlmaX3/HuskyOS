@@ -27,7 +27,6 @@ extern uint64_t end;
 
 void Kernel::makeGDT() {
     gdt_init();
-
 }
 
 void Kernel::makeIDT() {
@@ -41,6 +40,9 @@ void Kernel::KernelStart(struct stivale2_struct *stivale2_struct) {
     TextMode.initializeTextMode(term_str_tag);
     HuskyStandardOutput.kprint("Husky Kernel Started!\n");
 
+    initSerial();
+
+    debug("Started Husky Kernel.\n");
     struct stivale2_struct_tag_memmap *memmap_str_tag;
     memmap_str_tag = (stivale2_struct_tag_memmap *)stivale2_get_tag(stivale2_struct, STIVALE2_STRUCT_TAG_MEMMAP_ID);
 
@@ -51,7 +53,6 @@ void Kernel::KernelStart(struct stivale2_struct *stivale2_struct) {
     uint64_t kernel_pages = (uint64_t)kernel_size / 4096 + 1;
 
     GlobalAllocator.LockPages(&_KernelStart, kernel_pages);
-    HuskyStandardOutput.kprint("Kernel size: %llu (pages: %llu)\n", kernel_size, kernel_pages);
 
     PageTable *PML4Phys = (PageTable *)GlobalAllocator.RequestPage();
     PageTable *PML4 = (PageTable *)((uint64_t)PML4Phys + 0xffff800000000000);
@@ -93,6 +94,7 @@ void Kernel::KernelStart(struct stivale2_struct *stivale2_struct) {
     HuskyStandardOutput.statuslog(MAGENTA, "Framebuffer", "width: %dpx\n", framebuffer->framebuffer_width);
     HuskyStandardOutput.statuslog(MAGENTA, "Framebuffer", "height: %dpx\n", framebuffer->framebuffer_height);
     HuskyStandardOutput.statuslog(MAGENTA, "Framebuffer", "pitch: %d\n", framebuffer->framebuffer_pitch);
+    debug("Framebuffer with the size of %lldx%lld with pitch %lld has started.\n", framebuffer->framebuffer_width, framebuffer->framebuffer_height, framebuffer->framebuffer_pitch);
 
     HuskyStandardOutput.statuslog(CYAN, "Memory", "Free mem: %lld kb\n", GlobalAllocator.GetFreeRAM() / 1024);
     HuskyStandardOutput.statuslog(CYAN, "Memory", "Used mem: %lld kb\n", GlobalAllocator.GetUsedRAM() / 1024);
@@ -102,16 +104,29 @@ void Kernel::KernelStart(struct stivale2_struct *stivale2_struct) {
     makeIDT();
     timer_install();
     EnableKeyboard();
-   
+
+    stivale2_struct_tag_modules *modules = (stivale2_struct_tag_modules *)stivale2_get_tag(stivale2_struct, STIVALE2_STRUCT_TAG_MODULES_ID);
+    uint64_t ramdisk = modules->modules[0].begin;
+    uint64_t ramdisk_top = modules->modules[0].end;
+
+    if (ramdisk) {
+        initrd_mount(ramdisk, ramdisk_top);
+    }
+
+    DateTime *dt;
+    GetTime(dt);
+    HuskyStandardOutput.kprint("Booted at ");
+    FormatTime(dt);
+    HuskyStandardOutput.kprint("\n");
+    debug("[%lld.%lld] Booted at: %lld-%lld-%lldT%lld:%lld:%lld\n", getUptime(), getUpSubtime(), dt->year, dt->month, dt->day, dt->hour, dt->minute, dt->second);
+
     setlimit(0, cursor.y / GfxMode.charHeight);
     activate_keyboard_processing();
-    stivale2_struct_tag_epoch *epoch = (stivale2_struct_tag_epoch*)stivale2_get_tag(stivale2_struct, STIVALE2_STRUCT_TAG_EPOCH_ID);
-    HuskyStandardOutput.kprint("%lld-%lld-%lldT%lld:%lld:%lld\n", epoch->epoch / 60 / 60 / 24 / 365 + 1970, epoch->epoch / 60 / 60 / 24 % 31 + 1, epoch->epoch / 60 / 60 % 24 + 1, epoch->epoch / 60 / 60, epoch->epoch % 60);
-    
 
-    while (true) {
-        asm("hlt");
+    while (1) {
     }
+
+    asm("hlt");
 }
 
 Kernel hKernel;

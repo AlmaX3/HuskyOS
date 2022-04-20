@@ -40,6 +40,14 @@ void Sleep_pit(uint32_t s) {
 	}
 }
 
+uint32_t getUptime() {
+	return timer_ticks;
+}
+
+uint32_t getUpSubtime() {
+	return timer_subticks;
+}
+
 void timer_install() {
     pic_clear_mask(0);
     register_interrupt_handler(0, timer_handler);

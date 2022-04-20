@@ -59,6 +59,7 @@ void gfxmode::initializeFramebuffer(stivale2_struct_tag_framebuffer *framebuffer
     ssfn_dst.x = 0;
     ssfn_dst.y = 0;
     ssfn_dst.fg = textColor;
+    ssfn_dst.bg = BACKGROUND;
 
     GFX_MODE = 1;
 }

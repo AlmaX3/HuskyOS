@@ -4,7 +4,7 @@
 #include <pageFrameAllocator.h>
 #include <terminal.h>
 #include <kernelGlobal.h>
-
+#include <serial.h>
 uint64_t FreeMemory;
 uint64_t ReservedMemory;
 uint64_t UsedMemory;
@@ -25,6 +25,7 @@ void PageFrameAllocator::ReadMemoryMap(stivale2_struct* info) {
     for (int i = 0; i < MemoryMapEntries; i++) {
         if (memory_map->memmap[i].type == 1 || memory_map->memmap[i].type == 0x1000) { // type = EfiConventionalMemory
             if (memory_map->memmap[i].length > LargestFreeMemorySegmentSize) {
+                debug("Checking if 0x%llx segment with the size of 0x%llx is enough for bitmap.\n", (void *)memory_map->memmap[i].base, memory_map->memmap[i].length);
                 LargestFreeMemorySegment = (void *)memory_map->memmap[i].base;
                 LargestFreeMemorySegmentSize = memory_map->memmap[i].length;
             }

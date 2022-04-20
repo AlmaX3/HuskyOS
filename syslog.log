@@ -1,0 +1,7 @@
+Started Husky Kernel.
+Checking if 0x1000 segment with the size of 0x3e000 is enough for bitmap.
+Checking if 0x3f000 segment with the size of 0x60000 is enough for bitmap.
+Checking if 0x100000 segment with the size of 0xbf2fe000 is enough for bitmap.
+Checking if 0x0 segment with the size of 0x40000000 is enough for bitmap.
+Framebuffer with the size of 1024x768 with pitch 4096 has started.
+[0.1] Booted at: 2022-4-20T10:12:12

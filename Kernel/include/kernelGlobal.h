@@ -15,7 +15,10 @@
 #include "isr.h"
 #include <keyboard.h>
 #include <pit.h>
-
+#include "time.h"
+#include <serial.h>
+#include <vfs.h>
+#include <ext2.h>
 class Kernel {
 public:
     void KernelStart(struct stivale2_struct *stivale2_struct);

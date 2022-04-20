@@ -4,7 +4,7 @@ CFLAGS=-ffreestanding -m64 -O2 -Wall -Wextra -fno-exceptions -fno-rtti -mno-red-
 INTERNALLDFLAGS=-ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti -mno-red-zone -nostdlib -lgcc -g -z max-page-size=0x1000
 
 hi:
-	$(CC) -I Kernel/include/ Kernel/src/*.cpp Kernel/src/klib/*.cpp Kernel/src/drivers/*.cpp Kernel/src/memory/*.cpp Kernel/src/terminal/*.cpp Kernel/src/cpu/gdt/*.cpp Kernel/src/cpu/idt/*.cpp Kernel/src/cpu/isr/*.cpp  Kernel/src/cpu/pic/*.cpp -o hkernel.o $(CFLAGS)
+	$(CC) -I Kernel/include/ Kernel/src/*.cpp Kernel/src/klib/*.cpp Kernel/src/drivers/*.cpp Kernel/src/memory/*.cpp Kernel/src/terminal/*.cpp Kernel/src/cpu/gdt/*.cpp Kernel/src/cpu/idt/*.cpp Kernel/src/cpu/isr/*.cpp  Kernel/src/cpu/pic/*.cpp Kernel/src/time/*.cpp Kernel/src/fs/*.cpp -o hkernel.o $(CFLAGS)
 	nasm -f elf64 Kernel/src/cpu/gdt/*.asm -o gdt.o
 	nasm -f elf64 Kernel/src/cpu/idt/*.asm -o idt.o
 	nasm -f elf64 Kernel/src/cpu/isr/*.asm -o isr.o
@@ -29,7 +29,7 @@ makeIso:
 
 
 run:
-	qemu-system-x86_64 -cpu qemu64 -drive format=raw,media=cdrom,file=husky.iso -no-reboot -no-shutdown -m 8G -vga std -d int
+	qemu-system-x86_64 -cpu qemu64 -drive format=raw,media=cdrom,file=husky.iso -no-reboot -no-shutdown -m 8G -vga std -d int -serial file:syslog.log -monitor stdio
 
 doall:
 	make hi

@@ -1,5 +1,6 @@
 #pragma once
 #include <stivale2.h>
+
 extern int GFX_MODE;
 
 
@@ -49,10 +50,10 @@ class gfxmode {
         uint8_t charWidth;
         uint32_t textColor;
         uint32_t bgColor;
-    private:
-        uint64_t fb_addr;
         uint32_t fb_width;
         uint32_t fb_height;
+    private:
+        uint64_t fb_addr;
         uint32_t fb_pitch;
         uint32_t fb_bpp;
 };

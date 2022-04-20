@@ -3,6 +3,7 @@
 #include <isr.h>
 #include <pageFrameAllocator.h>
 #include <pic.h>
+#include <serial.h>
 #include <terminal.h>
 
 idt_t idtr;
@@ -155,6 +156,7 @@ intr_handler_ptr static_handlers[256];
 
 extern "C" void intr_common_handler_c(s_registers *regs) {
     intr_handler_ptr handler = static_handlers[regs->interrupt_number - 32];
+    
     if (regs->interrupt_number <= 0x1f) {
         HuskyStandardOutput.panic(regs, "If this is randomly appearing to you, and you don't know what causes this, please message Alma on Github (https://github.com/AlmaX3), so that he can look into it.\n");
     }
@@ -170,9 +172,7 @@ extern "C" void intr_common_handler_c(s_registers *regs) {
         if (handlers[regs->interrupt_number] != NULL) {
             handlers[regs->interrupt_number]->handle();
         }
-
         if (handler) {
-
             handler(regs);
         }
 
