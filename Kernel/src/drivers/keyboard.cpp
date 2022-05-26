@@ -4,6 +4,7 @@
 #include <keyboard.h>
 #include <pic.h>
 #include <terminal.h>
+#include <serial.h>
 
 char buffer[BUFFERSIZE];
 

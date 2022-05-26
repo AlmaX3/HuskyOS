@@ -1,5 +1,6 @@
 #include <pit.h>
 #include <terminal.h>
+#include <serial.h>
 
 #define PIT_A 0x40
 #define PIT_B 0x41
@@ -53,4 +54,5 @@ void timer_install() {
     register_interrupt_handler(0, timer_handler);
 	timer_phase(100);
     HuskyStandardOutput.statuslog(GREEN,"Timer", "Inititialized\n");
+	debug("Timer initialized.\n");
 }

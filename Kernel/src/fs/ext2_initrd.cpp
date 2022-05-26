@@ -3,6 +3,7 @@
 #include <string.h>
 #include <heap.h>
 #include <hkStdio.h>
+#include <serial.h>
 
 ext2_superblock_t * initrd_superblock;
 ext2_inodetable_t * initrd_root_node;
@@ -373,6 +374,7 @@ initrd_mount(
 		uint32_t mem_top
 		) {
 	HuskyStandardOutput.statuslog(0xff00ff, "EXT2", "Mounting EXT2 ramdisk...\n");
+	debug("Mounting EXT2 ramdisk...\n");
 	initrd_start = (void *)mem_head;
 	initrd_superblock = (ext2_superblock_t *)((void*)initrd_start + 1024);
 	assert(initrd_superblock->magic == EXT2_SUPER_MAGIC);
@@ -392,5 +394,6 @@ initrd_mount(
 	assert(initrd_node_root(root_inode, initrd_root));
 	fs_root = initrd_root;
 	HuskyStandardOutput.statuslog(0x00ffff,"INFO", "Mounted EXT2 ramdisk at 0x%x-0x%x, root VFS node is 0x%x\n", mem_head, mem_top, initrd_root);
+	debug("Mounted EXT2 ramdisk at 0x%x-0x%x, root VFS node is 0x%x\n", mem_head, mem_top, initrd_root);
 	//bfinish(0);
 }

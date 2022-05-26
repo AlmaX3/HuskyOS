@@ -138,6 +138,7 @@ void interrupts_init() {
     pic_set_mask(1);
     
     HuskyStandardOutput.statuslog(BLUE, "IDT", "Initialized\n");
+    debug("IDT initialized.\n");
 }
 
 
@@ -196,4 +197,5 @@ void interrupt_handler::handle() {
 
 void register_interrupt_handler(uint8_t intr, intr_handler_ptr handler) {
     static_handlers[intr] = handler;
+    debug("Added new handler!\n");
 }

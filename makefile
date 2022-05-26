@@ -13,7 +13,7 @@ hi:
 	$(CC) -T linker.ld -o husky.elf $(INTERNALLDFLAGS) hkernel.o gdt.o coprocessor.o unifont.o idt.o isr.o
 
 
-makeIso:
+iso:
 	cp -v husky.elf limine.cfg limine/limine.sys \
       limine/limine-cd.bin limine/limine-eltorito-efi.bin iso_root/
 	
@@ -28,9 +28,14 @@ makeIso:
 	./limine/limine-s2deploy husky.iso
 
 
+Huskyrd:
+	rm iso_root/initrd.img
+	genext2fs -b 1024 -d initrd iso_root/initrd.img
+
 run:
-	qemu-system-x86_64 -cpu qemu64 -drive format=raw,media=cdrom,file=husky.iso -no-reboot -no-shutdown -m 8G -vga std -d int -serial file:syslog.log -monitor stdio
+	qemu-system-x86_64 -cpu qemu64 -drive format=raw,media=cdrom,file=husky.iso -no-reboot -no-shutdown -m 8G -vga std -serial mon:stdio 
 
 doall:
 	make hi
-	make makeIso
+	make Huskyrd
+	make iso

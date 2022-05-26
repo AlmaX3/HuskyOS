@@ -89,5 +89,5 @@ void FormatTime(DateTime *dt) {
     char hour[2];
     char minute[2];
     char second[2];
-    HuskyStandardOutput.kprint("%lld. %s. %lld. (%s), %lld:%lld:%lld", dt->year, Months[(int)dt->month], dt->day, WeekDays[(int)dt->DayOfWeek], dt->hour, dt->minute, dt->second);
+    HuskyStandardOutput.kprint("%lld. %s. %lld. (%s), %lld:%lld:%lld", dt->year, Months[(int)dt->month - 1], dt->day, WeekDays[(int)dt->DayOfWeek], dt->hour, dt->minute, dt->second);
 }

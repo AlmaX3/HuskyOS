@@ -1,7 +1,7 @@
 #include <gdt.h>
 #include <terminal.h>
 #include <hkStdio.h>
-
+#include <serial.h>
 
 
 
@@ -118,4 +118,5 @@ void gdt_init(void)
     _load_gdt_and_tss_asm(&gdt_pointer);
 
     HuskyStandardOutput.statuslog(YELLOW, "GDT", "Initialized\n");
+    debug("GDT Initialized.\n");
 }

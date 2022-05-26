@@ -111,6 +111,16 @@ void Kernel::KernelStart(struct stivale2_struct *stivale2_struct) {
 
     if (ramdisk) {
         initrd_mount(ramdisk, ramdisk_top);
+        HuskyStandardOutput.kprint("Attempting to dump license...\n");
+        fs_node_t *fsnode = finddir_fs(fs_root, "license.txt");
+        if (fsnode) {
+            uint8_t *buf = (uint8_t *)malloc(1024);
+            uint32_t sz = read_fs(fsnode, 0, 1024, buf);
+            HuskyStandardOutput.kprint("%s\n", buf);
+            debug("%s\n", buf);
+        } else {
+            HuskyStandardOutput.kprint("Failed to dump license!\n");
+        }
     }
 
     DateTime *dt;
