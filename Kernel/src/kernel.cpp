@@ -130,6 +130,27 @@ void Kernel::KernelStart(struct stivale2_struct *stivale2_struct) {
     HuskyStandardOutput.kprint("\n");
     debug("[%lld.%lld] Booted at: %lld-%lld-%lldT%lld:%lld:%lld\n", getUptime(), getUpSubtime(), dt->year, dt->month, dt->day, dt->hour, dt->minute, dt->second);
 
+    stivale2_struct_tag_rsdp *rsdp = (stivale2_struct_tag_rsdp *)stivale2_get_tag(stivale2_struct, STIVALE2_STRUCT_TAG_RSDP_ID);
+    debug("RSDP FOUND AT %p\n", rsdp->rsdp);
+    PrepareACPI(rsdp);
+
+    for (size_t i = 0; i < PCIDevices.Length; i++) {
+        if(ClassTypes[PCIDevices[i]->Class] != "Unclassified")
+            HuskyStandardOutput.kprint("Device: %s %llx %llx\n", ClassTypes[PCIDevices[i]->Class], PCIDevices[i]->SubClass, PCIDevices[i]->ProgramIF);
+        switch (PCIDevices[i]->Class) /*MASS STORAGE DEVICE*/ {
+        case 0x1:
+            switch (PCIDevices[i]->SubClass) /*SERIAL ATA CONTROLLER*/ {
+            case 0x6:
+                switch (PCIDevices[i]->ProgramIF) /*AHCI 1.0*/ {
+                case 0x1:
+                    new AHCIDriver(PCIDevices[i]);
+                    break;
+                }
+                break;
+            }
+        }
+    }
+
     setlimit(0, cursor.y / GfxMode.charHeight);
     activate_keyboard_processing();
 

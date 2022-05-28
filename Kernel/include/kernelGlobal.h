@@ -19,6 +19,10 @@
 #include <serial.h>
 #include <vfs.h>
 #include <ext2.h>
+#include <acpi.h>
+#include <vector.h>
+#include <pci.h>
+#include <ahci.h>
 class Kernel {
 public:
     void KernelStart(struct stivale2_struct *stivale2_struct);

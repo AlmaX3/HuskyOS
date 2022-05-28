@@ -20,28 +20,33 @@ void PageFrameAllocator::ReadMemoryMap(stivale2_struct* info) {
     stivale2_struct_tag_memmap *memory_map = (stivale2_struct_tag_memmap *)hKernel.stivale2_get_tag(info, STIVALE2_STRUCT_TAG_MEMMAP_ID);
     uint64_t MemoryMapEntries = memory_map->entries;
     void *LargestFreeMemorySegment = NULL;
-    size_t LargestFreeMemorySegmentSize = 0;
+    uint64_t LargestFreeMemorySegmentSize = 0;
 
     for (int i = 0; i < MemoryMapEntries; i++) {
-        if (memory_map->memmap[i].type == 1 || memory_map->memmap[i].type == 0x1000) { // type = EfiConventionalMemory
+        if (memory_map->memmap[i].type == STIVALE2_MMAP_USABLE || memory_map->memmap[i].type == STIVALE2_MMAP_BOOTLOADER_RECLAIMABLE) { // type = EfiConventionalMemory
+            debug("[Map entry %d]: base -> 0x%llx || length -> 0x%llx (%llu)\n", i, memory_map->memmap[i].base, memory_map->memmap[i].length, memory_map->memmap[i].length);
             if (memory_map->memmap[i].length > LargestFreeMemorySegmentSize) {
-                debug("Checking if 0x%llx segment with the size of 0x%llx is enough for bitmap.\n", (void *)memory_map->memmap[i].base, memory_map->memmap[i].length);
+                debug("Checking if 0x%llx segment with the size of 0x%llx (%llu) is enough for bitmap.\n", (void *)memory_map->memmap[i].base, memory_map->memmap[i].length, memory_map->memmap[i].length);
                 LargestFreeMemorySegment = (void *)memory_map->memmap[i].base;
                 LargestFreeMemorySegmentSize = memory_map->memmap[i].length;
             }
         }
     }
 
+    debug("Largest Free Mem Segment: 0x%llx\n", LargestFreeMemorySegment);
+    debug("Largest Free Mem Segment size : 0x%llx\n", LargestFreeMemorySegmentSize);
+
     uint64_t MemorySize = MemFunc.GetAllFreeMemory(memory_map);
     FreeMemory = MemorySize;
     uint64_t BitmapSize = MemorySize / 4096 / 8 + 1;
+    debug("Bitmap size: %llu\n", BitmapSize);
+    InitBitmap(BitmapSize, LargestFreeMemorySegment);
 
-    InitBitmap(BitmapSize, LargestFreeMemorySegment + 0xffff800000000000);
-
-    ReservePages(0, MemorySize / 4096 + 1);
+    //ReservePages(0, MemorySize / 4096 + 1);
     for (int i = 0; i < memory_map->entries; i++){
-		if (memory_map->memmap[i].type == STIVALE2_MMAP_USABLE || memory_map->memmap[i].type == 0x1000) { 
-			UnreservePages((void*) memory_map->memmap[i].base, (memory_map->memmap[i].length / 0x1000) + 1);
+		if (memory_map->memmap[i].type == STIVALE2_MMAP_RESERVED) { 
+            debug("Reserving 0x%llx\n", memory_map->memmap[i].base);
+			ReservePages((void*) memory_map->memmap[i].base, (memory_map->memmap[i].length / 0x1000) + 1);
 		}
 	}
     ReservePages(0, 0x100); // reserve between 0 and 0x100000

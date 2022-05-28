@@ -136,6 +136,8 @@ void HeapSegHdr::CombineForward(){
     if(next == LastHdr) LastHdr == this;
     if(next->next != 0) next->next->last = this;
 
+    next = next->next;
+
     length = length + next->length + sizeof(HeapSegHdr);
 }
 
