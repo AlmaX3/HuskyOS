@@ -1,6 +1,7 @@
 # Husky Operating System
 
 A hobby operating system that runs on x86-64. The main goal is to have a modern general purpose Operating System
+Feel free to contribute to the project, it will be appreciated!
 
 ### Goals
 #### Near Future
@@ -14,8 +15,8 @@ A hobby operating system that runs on x86-64. The main goal is to have a modern 
 - [x] PIT
 - [x] Keyboard support
 - [ ] Mouse support (Skipping... Maybe later.)
-- [ ] ACPI
-- [ ] AHCI
+- [ ] ACPI (More tables are needed, otherwise MCFG is up and running (WORKS ONLY ON PCI DEVICES, PCIe ARE NOT ITERATED.))
+- [ ] AHCI (Read is ready)
 - [x] VFS
 - [x] Initrd File System (Ext2)
 - [ ] Elf Loader

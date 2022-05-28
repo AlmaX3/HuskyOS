@@ -2,6 +2,7 @@
 #include <Utils.h>
 #include <hkStdio.h>
 #include <pci.h>
+#include <heap.h>
 
 char *ClassTypes[] = {"Unclassified", "Mass Storage Device", "Network Controller", "Display Controller", "Multimedia Controller", "Memory Controller", "Bridge", "Simple Communication Controller", "Base System Peripheral", "Input Device Controller", "Docking Station", "Processor", "Serial Bus Controller", "Wireless Controller", "Intelligent Controller", "Encryption Controller", "signal Processing Controller", "Processing Accelerator", "Non-Essential Instrumentation", "Reserved"};
 char *UnclassifiedSubClasses[] = {"Non-VGA-Compatible Unclassified Device", "VGA-Compatible Unclassified Device"};
@@ -63,6 +64,7 @@ void EnumerateBus(uint64_t baseAddress, uint64_t bus) {
     }
 }
 
+
 void EnumeratePCI(MCFGHeader *mcfg) {
     int entries = ((mcfg->Header.Length) - sizeof(MCFGHeader)) / sizeof(DeviceConfig);
     for (int i = 0; i < entries; i++) {
@@ -72,5 +74,7 @@ void EnumeratePCI(MCFGHeader *mcfg) {
 
             EnumerateBus(NewDeviceConfig->BaseAddress, bus);
         }
+        
     }
 }
+

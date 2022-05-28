@@ -116,7 +116,7 @@ void Kernel::KernelStart(struct stivale2_struct *stivale2_struct) {
         if (fsnode) {
             uint8_t *buf = (uint8_t *)malloc(1024);
             uint32_t sz = read_fs(fsnode, 0, 1024, buf);
-            HuskyStandardOutput.kprint("%s\n", buf);
+            //HuskyStandardOutput.kprint("%s\n", buf);
             debug("%s\n", buf);
         } else {
             HuskyStandardOutput.kprint("Failed to dump license!\n");

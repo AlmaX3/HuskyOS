@@ -33,7 +33,7 @@ Huskyrd:
 	genext2fs -b 1024 -d initrd iso_root/initrd.img
 
 run:
-	qemu-system-x86_64 -machine q35 -cpu qemu64 -drive format=raw,media=cdrom,file=husky.iso -no-reboot -no-shutdown -m 4G -vga std -serial mon:stdio 
+	qemu-system-x86_64 -machine q35 -cpu qemu64  -drive file=husky.iso -drive file=test.img -no-reboot -no-shutdown -m 4G -vga std -serial mon:stdio 
 
 doall:
 	make hi

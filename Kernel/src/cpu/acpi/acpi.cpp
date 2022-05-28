@@ -82,6 +82,7 @@ void PrepareACPI(stivale2_struct_tag_rsdp *rsdp) {
 
         EnumeratePCI(mcfg);
 
+
         APIC *Apic = (APIC *)FindTable("APIC", (void *)rsdt);
         uint8_t lapic_ids[256] = {0}; // CPU core Local APIC IDs
         uint8_t numcore = 0;          // number of cores detected
