@@ -135,8 +135,7 @@ void Kernel::KernelStart(struct stivale2_struct *stivale2_struct) {
     PrepareACPI(rsdp);
 
     for (size_t i = 0; i < PCIDevices.Length; i++) {
-        if(ClassTypes[PCIDevices[i]->Class] != "Unclassified")
-            HuskyStandardOutput.kprint("Device: %s %llx %llx\n", ClassTypes[PCIDevices[i]->Class], PCIDevices[i]->SubClass, PCIDevices[i]->ProgramIF);
+       
         switch (PCIDevices[i]->Class) /*MASS STORAGE DEVICE*/ {
         case 0x1:
             switch (PCIDevices[i]->SubClass) /*SERIAL ATA CONTROLLER*/ {

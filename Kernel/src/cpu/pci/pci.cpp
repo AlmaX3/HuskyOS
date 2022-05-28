@@ -1,26 +1,23 @@
 #include <PageTableManager.h>
+#include <Utils.h>
 #include <hkStdio.h>
 #include <pci.h>
-#include <Utils.h>
 
 char *ClassTypes[] = {"Unclassified", "Mass Storage Device", "Network Controller", "Display Controller", "Multimedia Controller", "Memory Controller", "Bridge", "Simple Communication Controller", "Base System Peripheral", "Input Device Controller", "Docking Station", "Processor", "Serial Bus Controller", "Wireless Controller", "Intelligent Controller", "Encryption Controller", "signal Processing Controller", "Processing Accelerator", "Non-Essential Instrumentation", "Reserved"};
-char *UnclassifiedSubClasses[] = {"Non-VGA-Compatible Unclassified Device","VGA-Compatible Unclassified Device"};
+char *UnclassifiedSubClasses[] = {"Non-VGA-Compatible Unclassified Device", "VGA-Compatible Unclassified Device"};
 char *MassStorageControllerSubClasses[] = {"SCSI Bus Controller", "IDE Controller", "Floppy Disk Controller", "IPI Bus Controller", "RAID Controller", "ATA Controller", "Serial ATA Controller", "Serial Attached SCSI Controller", "Non-Volatile Memory Controller"};
 
 Vector<PCIDeviceHeader *> PCIDevices;
 
-
-
-char* getSubClass(uint8_t classCode, uint8_t subClassCode) {
-    switch (classCode)
-    {
+char *getSubClass(uint8_t classCode, uint8_t subClassCode) {
+    switch (classCode) {
     case 0x0:
         return UnclassifiedSubClasses[subClassCode];
     case 0x1:
         return MassStorageControllerSubClasses[subClassCode];
     }
-    return (char*)subClassCode;
-} 
+    return (char *)subClassCode;
+}
 
 void EnumerateFunction(uint64_t deviceAddress, uint64_t function) {
     uint64_t offset = function << 12;
@@ -68,10 +65,10 @@ void EnumerateBus(uint64_t baseAddress, uint64_t bus) {
 
 void EnumeratePCI(MCFGHeader *mcfg) {
     int entries = ((mcfg->Header.Length) - sizeof(MCFGHeader)) / sizeof(DeviceConfig);
-    HuskyStandardOutput.kprint("(%lld - %lld) / %lld\n", mcfg->Header.Length, sizeof(MCFGHeader), sizeof(DeviceConfig));
     for (int i = 0; i < entries; i++) {
         DeviceConfig *NewDeviceConfig = (DeviceConfig *)((uint64_t)mcfg + sizeof(MCFGHeader) + (sizeof(DeviceConfig) * i));
-        for (uint64_t bus = 0; bus < 256; bus++) {
+        HuskyStandardOutput.kprint("Start Bus: %lld, end bus: %lld\n", NewDeviceConfig->StartBus, NewDeviceConfig->EndBus);
+        for (uint64_t bus = NewDeviceConfig->StartBus; bus < NewDeviceConfig->EndBus; bus++) {
 
             EnumerateBus(NewDeviceConfig->BaseAddress, bus);
         }
