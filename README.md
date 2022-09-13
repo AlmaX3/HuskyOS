@@ -15,7 +15,7 @@ Feel free to contribute to the project, it will be appreciated!
 - [x] PIT
 - [x] Keyboard support
 - [ ] Mouse support (Skipping... Maybe later.)
-- [ ] ACPI (More tables are needed, otherwise MCFG is up and running (WORKS ONLY ON PCI DEVICES, PCIe ARE NOT ITERATED.))
+- [ ] ACPI (More tables are needed, otherwise MCFG is up and running)
 - [ ] AHCI (Read is ready)
 - [x] VFS
 - [x] Initrd File System (Ext2)
